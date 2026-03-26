@@ -2,42 +2,42 @@ import { useState, useEffect, useRef } from "react";
 
 const SPECIES_DB = [
   // Freshwater Fish
-  { id: 1, name: "Neon Tetra", type: "fish", water: "freshwater", minTank: 10, tempMin: 70, tempMax: 82, phMin: 5.0, phMax: 7.5, school: 6, difficulty: "beginner", img: "🐟", color: "#00e5ff", desc: "Brilliant iridescent blue and red. Peaceful schooling fish perfect for community tanks.", popular: true },
-  { id: 2, name: "Betta Splendens", type: "fish", water: "freshwater", minTank: 5, tempMin: 76, tempMax: 82, phMin: 6.0, phMax: 7.5, school: 1, difficulty: "beginner", img: "🐠", color: "#e91e63", desc: "Stunning flowing fins. Keep males solo — territorial but full of personality.", popular: true },
-  { id: 3, name: "Corydoras Catfish", type: "fish", water: "freshwater", minTank: 10, tempMin: 72, tempMax: 79, phMin: 6.0, phMax: 7.8, school: 4, difficulty: "beginner", img: "🐟", color: "#ffab40", desc: "Adorable bottom-dwellers that keep your substrate clean. Very social.", popular: true },
-  { id: 4, name: "Angelfish", type: "fish", water: "freshwater", minTank: 30, tempMin: 76, tempMax: 84, phMin: 6.0, phMax: 7.5, school: 2, difficulty: "intermediate", img: "🐠", color: "#e0e0e0", desc: "Majestic and graceful. A stunning centerpiece fish for medium to large tanks.", popular: true },
-  { id: 5, name: "Cherry Barb", type: "fish", water: "freshwater", minTank: 10, tempMin: 73, tempMax: 81, phMin: 6.0, phMax: 7.0, school: 6, difficulty: "beginner", img: "🐟", color: "#ff5252", desc: "Vibrant red coloration. Hardy, peaceful, and great for planted tanks." },
-  { id: 6, name: "Dwarf Gourami", type: "fish", water: "freshwater", minTank: 10, tempMin: 72, tempMax: 82, phMin: 6.0, phMax: 7.5, school: 1, difficulty: "beginner", img: "🐠", color: "#448aff", desc: "Brilliant blues and reds. A labyrinth fish that breathes air from the surface." },
-  { id: 7, name: "German Blue Ram", type: "fish", water: "freshwater", minTank: 20, tempMin: 78, tempMax: 85, phMin: 5.0, phMax: 7.0, school: 2, difficulty: "intermediate", img: "🐠", color: "#ffeb3b", desc: "Electric blue and gold. A dwarf cichlid with incredible personality." },
-  { id: 8, name: "Bristlenose Pleco", type: "fish", water: "freshwater", minTank: 20, tempMin: 73, tempMax: 81, phMin: 6.5, phMax: 7.5, school: 1, difficulty: "beginner", img: "🐟", color: "#795548", desc: "Excellent algae eater. Stays small unlike common plecos.", popular: true },
-  { id: 9, name: "Harlequin Rasbora", type: "fish", water: "freshwater", minTank: 10, tempMin: 73, tempMax: 82, phMin: 6.0, phMax: 7.5, school: 8, difficulty: "beginner", img: "🐟", color: "#ff9800", desc: "Copper and black wedge pattern. Peaceful and looks stunning in groups." },
-  { id: 10, name: "Discus", type: "fish", water: "freshwater", minTank: 55, tempMin: 82, tempMax: 88, phMin: 5.5, phMax: 7.0, school: 5, difficulty: "advanced", img: "🐠", color: "#e040fb", desc: "The king of freshwater aquariums. Requires pristine water but rewards with breathtaking beauty." },
+  { id: 1, name: "Neon Tetra", type: "fish", water: "freshwater", minTank: 10, tempMin: 70, tempMax: 82, phMin: 5.0, phMax: 7.5, ghMin: 1, ghMax: 10, khMin: 1, khMax: 5, school: 6, difficulty: "beginner", img: "🐟", color: "#00e5ff", desc: "Brilliant iridescent blue and red. Peaceful schooling fish perfect for community tanks.", popular: true },
+  { id: 2, name: "Betta Splendens", type: "fish", water: "freshwater", minTank: 5, tempMin: 76, tempMax: 82, phMin: 6.0, phMax: 7.5, ghMin: 1, ghMax: 12, khMin: 1, khMax: 5, school: 1, difficulty: "beginner", img: "🐠", color: "#e91e63", desc: "Stunning flowing fins. Keep males solo — territorial but full of personality.", popular: true },
+  { id: 3, name: "Corydoras Catfish", type: "fish", water: "freshwater", minTank: 10, tempMin: 72, tempMax: 79, phMin: 6.0, phMax: 7.8, ghMin: 2, ghMax: 15, khMin: 2, khMax: 8, school: 4, difficulty: "beginner", img: "🐟", color: "#ffab40", desc: "Adorable bottom-dwellers that keep your substrate clean. Very social.", popular: true },
+  { id: 4, name: "Angelfish", type: "fish", water: "freshwater", minTank: 30, tempMin: 76, tempMax: 84, phMin: 6.0, phMax: 7.5, ghMin: 3, ghMax: 10, khMin: 1, khMax: 5, school: 2, difficulty: "intermediate", img: "🐠", color: "#e0e0e0", desc: "Majestic and graceful. A stunning centerpiece fish for medium to large tanks.", popular: true },
+  { id: 5, name: "Cherry Barb", type: "fish", water: "freshwater", minTank: 10, tempMin: 73, tempMax: 81, phMin: 6.0, phMax: 7.0, ghMin: 4, ghMax: 15, khMin: 2, khMax: 8, school: 6, difficulty: "beginner", img: "🐟", color: "#ff5252", desc: "Vibrant red coloration. Hardy, peaceful, and great for planted tanks." },
+  { id: 6, name: "Dwarf Gourami", type: "fish", water: "freshwater", minTank: 10, tempMin: 72, tempMax: 82, phMin: 6.0, phMax: 7.5, ghMin: 4, ghMax: 10, khMin: 1, khMax: 5, school: 1, difficulty: "beginner", img: "🐠", color: "#448aff", desc: "Brilliant blues and reds. A labyrinth fish that breathes air from the surface." },
+  { id: 7, name: "German Blue Ram", type: "fish", water: "freshwater", minTank: 20, tempMin: 78, tempMax: 85, phMin: 5.0, phMax: 7.0, ghMin: 0, ghMax: 6, khMin: 0, khMax: 3, school: 2, difficulty: "intermediate", img: "🐠", color: "#ffeb3b", desc: "Electric blue and gold. A dwarf cichlid with incredible personality." },
+  { id: 8, name: "Bristlenose Pleco", type: "fish", water: "freshwater", minTank: 20, tempMin: 73, tempMax: 81, phMin: 6.5, phMax: 7.5, ghMin: 2, ghMax: 15, khMin: 1, khMax: 8, school: 1, difficulty: "beginner", img: "🐟", color: "#795548", desc: "Excellent algae eater. Stays small unlike common plecos.", popular: true },
+  { id: 9, name: "Harlequin Rasbora", type: "fish", water: "freshwater", minTank: 10, tempMin: 73, tempMax: 82, phMin: 6.0, phMax: 7.5, ghMin: 2, ghMax: 10, khMin: 1, khMax: 5, school: 8, difficulty: "beginner", img: "🐟", color: "#ff9800", desc: "Copper and black wedge pattern. Peaceful and looks stunning in groups." },
+  { id: 10, name: "Discus", type: "fish", water: "freshwater", minTank: 55, tempMin: 82, tempMax: 88, phMin: 5.5, phMax: 7.0, ghMin: 0, ghMax: 5, khMin: 0, khMax: 3, school: 5, difficulty: "advanced", img: "🐠", color: "#e040fb", desc: "The king of freshwater aquariums. Requires pristine water but rewards with breathtaking beauty." },
   
   // Saltwater Fish
-  { id: 11, name: "Ocellaris Clownfish", type: "fish", water: "saltwater", minTank: 20, tempMin: 74, tempMax: 80, phMin: 8.0, phMax: 8.4, school: 2, difficulty: "beginner", img: "🐠", color: "#ff6d00", desc: "The iconic 'Nemo'. Hardy, colorful, and bonds with anemones.", popular: true },
-  { id: 12, name: "Royal Gramma", type: "fish", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 78, phMin: 8.1, phMax: 8.4, school: 1, difficulty: "beginner", img: "🐠", color: "#aa00ff", desc: "Striking purple and yellow. A peaceful reef-safe fish." },
-  { id: 13, name: "Yellow Tang", type: "fish", water: "saltwater", minTank: 75, tempMin: 72, tempMax: 78, phMin: 8.1, phMax: 8.4, school: 1, difficulty: "intermediate", img: "🐠", color: "#ffd600", desc: "Electric yellow coloration. Active swimmer needing room to roam." },
-  { id: 14, name: "Firefish Goby", type: "fish", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 80, phMin: 8.1, phMax: 8.4, school: 1, difficulty: "beginner", img: "🐟", color: "#ff1744", desc: "Elegant white body with fiery red tail. Peaceful and hardy." },
+  { id: 11, name: "Ocellaris Clownfish", type: "fish", water: "saltwater", minTank: 20, tempMin: 74, tempMax: 80, phMin: 8.0, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 2, difficulty: "beginner", img: "🐠", color: "#ff6d00", desc: "The iconic 'Nemo'. Hardy, colorful, and bonds with anemones.", popular: true },
+  { id: 12, name: "Royal Gramma", type: "fish", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 78, phMin: 8.1, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "beginner", img: "🐠", color: "#aa00ff", desc: "Striking purple and yellow. A peaceful reef-safe fish." },
+  { id: 13, name: "Yellow Tang", type: "fish", water: "saltwater", minTank: 75, tempMin: 72, tempMax: 78, phMin: 8.1, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "intermediate", img: "🐠", color: "#ffd600", desc: "Electric yellow coloration. Active swimmer needing room to roam." },
+  { id: 14, name: "Firefish Goby", type: "fish", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 80, phMin: 8.1, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "beginner", img: "🐟", color: "#ff1744", desc: "Elegant white body with fiery red tail. Peaceful and hardy." },
 
   // Invertebrates
-  { id: 20, name: "Amano Shrimp", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 70, tempMax: 80, phMin: 6.5, phMax: 7.5, school: 3, difficulty: "beginner", img: "🦐", color: "#b2dfdb", desc: "Champion algae eaters. Transparent with distinctive dots along the body.", popular: true },
-  { id: 21, name: "Cherry Shrimp", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 65, tempMax: 80, phMin: 6.2, phMax: 8.0, school: 6, difficulty: "beginner", img: "🦐", color: "#ef5350", desc: "Brilliant red neocaridina. Breed readily and create living jewels in your tank.", popular: true },
-  { id: 22, name: "Nerite Snail", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 72, tempMax: 78, phMin: 7.0, phMax: 8.5, school: 1, difficulty: "beginner", img: "🐌", color: "#a1887f", desc: "Tireless algae eaters with beautiful shell patterns. Won't breed in freshwater." },
-  { id: 23, name: "Mystery Snail", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 68, tempMax: 82, phMin: 7.0, phMax: 8.0, school: 1, difficulty: "beginner", img: "🐌", color: "#ffc107", desc: "Colorful and entertaining to watch. Available in gold, blue, ivory, and more." },
-  { id: 24, name: "Cleaner Shrimp", type: "invertebrate", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 80, phMin: 8.0, phMax: 8.4, school: 1, difficulty: "beginner", img: "🦐", color: "#ff6e40", desc: "Sets up cleaning stations for fish. Charismatic and useful reef inhabitant.", popular: true },
-  { id: 25, name: "Emerald Crab", type: "invertebrate", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 80, phMin: 8.0, phMax: 8.4, school: 1, difficulty: "beginner", img: "🦀", color: "#00c853", desc: "Brilliant green. Consumes bubble algae that other creatures won't touch." },
+  { id: 20, name: "Amano Shrimp", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 70, tempMax: 80, phMin: 6.5, phMax: 7.5, ghMin: 6, ghMax: 15, khMin: 3, khMax: 8, school: 3, difficulty: "beginner", img: "🦐", color: "#b2dfdb", desc: "Champion algae eaters. Transparent with distinctive dots along the body.", popular: true },
+  { id: 21, name: "Cherry Shrimp", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 65, tempMax: 80, phMin: 6.2, phMax: 8.0, ghMin: 4, ghMax: 8, khMin: 3, khMax: 8, school: 6, difficulty: "beginner", img: "🦐", color: "#ef5350", desc: "Brilliant red neocaridina. Breed readily and create living jewels in your tank.", popular: true },
+  { id: 22, name: "Nerite Snail", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 72, tempMax: 78, phMin: 7.0, phMax: 8.5, ghMin: 5, ghMax: 15, khMin: 5, khMax: 12, school: 1, difficulty: "beginner", img: "🐌", color: "#a1887f", desc: "Tireless algae eaters with beautiful shell patterns. Won't breed in freshwater." },
+  { id: 23, name: "Mystery Snail", type: "invertebrate", water: "freshwater", minTank: 5, tempMin: 68, tempMax: 82, phMin: 7.0, phMax: 8.0, ghMin: 5, ghMax: 15, khMin: 5, khMax: 12, school: 1, difficulty: "beginner", img: "🐌", color: "#ffc107", desc: "Colorful and entertaining to watch. Available in gold, blue, ivory, and more." },
+  { id: 24, name: "Cleaner Shrimp", type: "invertebrate", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 80, phMin: 8.0, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "beginner", img: "🦐", color: "#ff6e40", desc: "Sets up cleaning stations for fish. Charismatic and useful reef inhabitant.", popular: true },
+  { id: 25, name: "Emerald Crab", type: "invertebrate", water: "saltwater", minTank: 20, tempMin: 72, tempMax: 80, phMin: 8.0, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "beginner", img: "🦀", color: "#00c853", desc: "Brilliant green. Consumes bubble algae that other creatures won't touch." },
 
   // Corals
-  { id: 30, name: "Zoanthids", type: "coral", water: "saltwater", minTank: 10, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, school: 1, difficulty: "beginner", img: "🪸", color: "#76ff03", desc: "Kaleidoscopic colors. The gateway coral — hardy and comes in infinite morphs.", popular: true },
-  { id: 31, name: "Mushroom Coral", type: "coral", water: "saltwater", minTank: 10, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, school: 1, difficulty: "beginner", img: "🪸", color: "#d500f9", desc: "Soft, flowing discs in vivid colors. Nearly indestructible for a coral." },
-  { id: 32, name: "Hammer Coral", type: "coral", water: "saltwater", minTank: 30, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, school: 1, difficulty: "intermediate", img: "🪸", color: "#00e676", desc: "Flowing tentacles with hammer-shaped tips. Mesmerizing movement under flow." },
-  { id: 33, name: "Torch Coral", type: "coral", water: "saltwater", minTank: 30, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, school: 1, difficulty: "intermediate", img: "🪸", color: "#ffea00", desc: "Long flowing tentacles. Clownfish sometimes host in these as anemone substitutes." },
-  { id: 34, name: "Acropora", type: "coral", water: "saltwater", minTank: 50, tempMin: 76, tempMax: 80, phMin: 8.1, phMax: 8.4, school: 1, difficulty: "advanced", img: "🪸", color: "#18ffff", desc: "The pinnacle of reef keeping. Stunning branching structures demanding pristine water." },
+  { id: 30, name: "Zoanthids", type: "coral", water: "saltwater", minTank: 10, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "beginner", img: "🪸", color: "#76ff03", desc: "Kaleidoscopic colors. The gateway coral — hardy and comes in infinite morphs.", popular: true },
+  { id: 31, name: "Mushroom Coral", type: "coral", water: "saltwater", minTank: 10, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 7, khMax: 11, school: 1, difficulty: "beginner", img: "🪸", color: "#d500f9", desc: "Soft, flowing discs in vivid colors. Nearly indestructible for a coral." },
+  { id: 32, name: "Hammer Coral", type: "coral", water: "saltwater", minTank: 30, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "intermediate", img: "🪸", color: "#00e676", desc: "Flowing tentacles with hammer-shaped tips. Mesmerizing movement under flow." },
+  { id: 33, name: "Torch Coral", type: "coral", water: "saltwater", minTank: 30, tempMin: 75, tempMax: 80, phMin: 8.0, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 8, khMax: 12, school: 1, difficulty: "intermediate", img: "🪸", color: "#ffea00", desc: "Long flowing tentacles. Clownfish sometimes host in these as anemone substitutes." },
+  { id: 34, name: "Acropora", type: "coral", water: "saltwater", minTank: 50, tempMin: 76, tempMax: 80, phMin: 8.1, phMax: 8.4, ghMin: 8, ghMax: 12, khMin: 9, khMax: 12, school: 1, difficulty: "advanced", img: "🪸", color: "#18ffff", desc: "The pinnacle of reef keeping. Stunning branching structures demanding pristine water." },
 
   // Amphibians
-  { id: 40, name: "African Dwarf Frog", type: "amphibian", water: "freshwater", minTank: 5, tempMin: 72, tempMax: 82, phMin: 6.5, phMax: 7.8, school: 2, difficulty: "beginner", img: "🐸", color: "#69f0ae", desc: "Fully aquatic and full of charm. Loves to float at the surface with arms spread.", popular: true },
-  { id: 41, name: "Axolotl", type: "amphibian", water: "freshwater", minTank: 20, tempMin: 60, tempMax: 68, phMin: 6.5, phMax: 8.0, school: 1, difficulty: "intermediate", img: "🦎", color: "#f8bbd0", desc: "The smiling salamander. Needs cold water and gentle flow. Utterly unique.", popular: true },
-  { id: 42, name: "Fire Belly Newt", type: "amphibian", water: "freshwater", minTank: 10, tempMin: 62, tempMax: 72, phMin: 6.5, phMax: 7.5, school: 2, difficulty: "intermediate", img: "🦎", color: "#ff3d00", desc: "Vivid orange belly warns predators. Semi-aquatic — needs land area access." },
+  { id: 40, name: "African Dwarf Frog", type: "amphibian", water: "freshwater", minTank: 5, tempMin: 72, tempMax: 82, phMin: 6.5, phMax: 7.8, ghMin: 5, ghMax: 15, khMin: 2, khMax: 8, school: 2, difficulty: "beginner", img: "🐸", color: "#69f0ae", desc: "Fully aquatic and full of charm. Loves to float at the surface with arms spread.", popular: true },
+  { id: 41, name: "Axolotl", type: "amphibian", water: "freshwater", minTank: 20, tempMin: 60, tempMax: 68, phMin: 6.5, phMax: 8.0, ghMin: 7, ghMax: 14, khMin: 3, khMax: 8, school: 1, difficulty: "intermediate", img: "🦎", color: "#f8bbd0", desc: "The smiling salamander. Needs cold water and gentle flow. Utterly unique.", popular: true },
+  { id: 42, name: "Fire Belly Newt", type: "amphibian", water: "freshwater", minTank: 10, tempMin: 62, tempMax: 72, phMin: 6.5, phMax: 7.5, ghMin: 6, ghMax: 12, khMin: 3, khMax: 8, school: 2, difficulty: "intermediate", img: "🦎", color: "#ff3d00", desc: "Vivid orange belly warns predators. Semi-aquatic — needs land area access." },
 ];
 
 const CURATED_SETUPS = [
@@ -108,6 +108,8 @@ export default function AquariumStockr() {
   const [waterType, setWaterType] = useState("freshwater");
   const [temp, setTemp] = useState(76);
   const [ph, setPh] = useState(7.0);
+  const [gh, setGh] = useState(8);
+  const [kh, setKh] = useState(5);
   const [typeFilter, setTypeFilter] = useState("all");
   const [diffFilter, setDiffFilter] = useState("all");
   const [selectedSpecies, setSelectedSpecies] = useState(null);
@@ -125,13 +127,15 @@ export default function AquariumStockr() {
     if (s.minTank > tankSize) return false;
     if (temp < s.tempMin || temp > s.tempMax) return false;
     if (ph < s.phMin || ph > s.phMax) return false;
+    if (gh < s.ghMin || gh > s.ghMax) return false;
+    if (kh < s.khMin || kh > s.khMax) return false;
     if (typeFilter !== "all" && s.type !== typeFilter) return false;
     if (diffFilter !== "all" && s.difficulty !== diffFilter) return false;
     return true;
   });
 
   const popularPicks = SPECIES_DB.filter(
-    (s) => s.popular && s.water === waterType && s.minTank <= tankSize && temp >= s.tempMin && temp <= s.tempMax && ph >= s.phMin && ph <= s.phMax
+    (s) => s.popular && s.water === waterType && s.minTank <= tankSize && temp >= s.tempMin && temp <= s.tempMax && ph >= s.phMin && ph <= s.phMax && gh >= s.ghMin && gh <= s.ghMax && kh >= s.khMin && kh <= s.khMax
   );
 
   const matchingSetups = CURATED_SETUPS.filter((s) => s.water === waterType && s.minTank <= tankSize);
@@ -258,6 +262,8 @@ export default function AquariumStockr() {
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                 animation: "shimmer 4s linear infinite",
                 letterSpacing: -1,
+                lineHeight: 1.2,
+                padding: "6px 2px",
               }}>
                 AquaStock
               </h1>
@@ -343,6 +349,8 @@ export default function AquariumStockr() {
                       setWaterType(w);
                       if (w === "saltwater" && ph < 8.0) setPh(8.2);
                       if (w === "freshwater" && ph > 8.0) setPh(7.0);
+                      if (w === "saltwater") { setGh(10); setKh(9); }
+                      if (w === "freshwater") { setGh(8); setKh(5); }
                     }}
                     style={{
                       flex: 1, padding: "16px 24px", borderRadius: 16,
@@ -429,6 +437,52 @@ export default function AquariumStockr() {
               </div>
             </div>
 
+            {/* GH */}
+            <div style={{ animation: "fadeUp 0.6s ease 0.5s both" }}>
+              <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 12 }}>
+                GH — General Hardness
+              </label>
+              <div style={{
+                background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+                  <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{gh} <span style={{ fontSize: 16, fontWeight: 400 }}>dGH</span></span>
+                  <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>
+                    {gh <= 4 ? "Very Soft" : gh <= 8 ? "Soft" : gh <= 12 ? "Moderate" : gh <= 18 ? "Hard" : "Very Hard"}
+                  </span>
+                </div>
+                <input type="range" min={0} max={25} value={gh}
+                  onChange={(e) => setGh(+e.target.value)} />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
+                  <span>0 dGH</span><span>25 dGH</span>
+                </div>
+              </div>
+            </div>
+
+            {/* KH */}
+            <div style={{ animation: "fadeUp 0.6s ease 0.6s both" }}>
+              <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 12 }}>
+                KH — Carbonate Hardness
+              </label>
+              <div style={{
+                background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+                  <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{kh} <span style={{ fontSize: 16, fontWeight: 400 }}>dKH</span></span>
+                  <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>
+                    {kh <= 3 ? "Very Low" : kh <= 6 ? "Low" : kh <= 9 ? "Moderate" : kh <= 12 ? "High" : "Very High"}
+                  </span>
+                </div>
+                <input type="range" min={0} max={15} value={kh}
+                  onChange={(e) => setKh(+e.target.value)} />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
+                  <span>0 dKH</span><span>15 dKH</span>
+                </div>
+              </div>
+            </div>
+
             <button
               onClick={() => { setStep(2); setTypeFilter("all"); setDiffFilter("all"); setSelectedSpecies(null); }}
               className="glow-btn"
@@ -478,6 +532,10 @@ export default function AquariumStockr() {
                 <span>{temp}°F</span>
                 <span style={{ opacity: 0.3 }}>|</span>
                 <span>pH {ph.toFixed(1)}</span>
+                <span style={{ opacity: 0.3 }}>|</span>
+                <span>GH {gh} dGH</span>
+                <span style={{ opacity: 0.3 }}>|</span>
+                <span>KH {kh} dKH</span>
               </div>
             </div>
 
@@ -603,7 +661,7 @@ export default function AquariumStockr() {
                 <div style={{ padding: 48, textAlign: "center", color: "rgba(176,222,255,0.4)" }}>
                   <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
                   <p style={{ fontSize: 16 }}>No species match your current parameters.</p>
-                  <p style={{ fontSize: 13, marginTop: 8 }}>Try adjusting your tank size, temperature, or pH.</p>
+                  <p style={{ fontSize: 13, marginTop: 8 }}>Try adjusting your tank size, temperature, pH, GH, or KH.</p>
                 </div>
               ) : (
                 compatible.map((sp, i) => (
@@ -662,6 +720,14 @@ export default function AquariumStockr() {
                           <div>
                             <span style={{ color: "rgba(176,222,255,0.35)" }}>pH Range</span>
                             <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.phMin}–{sp.phMax}</div>
+                          </div>
+                          <div>
+                            <span style={{ color: "rgba(176,222,255,0.35)" }}>GH Range</span>
+                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.ghMin}–{sp.ghMax} dGH</div>
+                          </div>
+                          <div>
+                            <span style={{ color: "rgba(176,222,255,0.35)" }}>KH Range</span>
+                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.khMin}–{sp.khMax} dKH</div>
                           </div>
                           <div>
                             <span style={{ color: "rgba(176,222,255,0.35)" }}>Min Tank</span>
