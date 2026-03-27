@@ -289,16 +289,17 @@ export default function AquariumStockr() {
   const fishRefs = useRef([]);
   // Random fish pool — generated once on mount, covers 0–5000% page depth
   const fishPool = useRef(
-    Array.from({ length: 160 }, () => {
-      const size = [22, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64][Math.floor(Math.random() * 11)];
-      const topPct = Math.random() * 5000;
+    Array.from({ length: 150 }, (_, i) => {
+      const sizes = [22, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64];
+      const size = sizes[i % sizes.length];
+      const topPct = i * 32;
       return {
         size,
-        topPct,                          // mutable number, updated on recycle
-        top: `${topPct}%`,               // initial CSS value
+        topPct,
+        top: `${topPct}%`,
         duration: Math.round(70 - size * 0.85),
-        delay: -(Math.random() * 55),
-        direction: Math.random() > 0.5 ? "right" : "left",
+        delay: -((i * 11 + 3) % 50),
+        direction: i % 2 === 0 ? "right" : "left",
         opacity: size >= 56 ? 0.11 : size >= 44 ? 0.09 : size >= 32 ? 0.07 : 0.05,
         speed: 0.35 + (size / 64) * 0.75,
       };
@@ -333,21 +334,9 @@ export default function AquariumStockr() {
           const depth = (bubbleSpeeds.current[i] ?? 0.75) * mobileScale;
           el.style.transform = `translateY(${-y * depth}px)`;
         });
-        const vh = window.innerHeight;
         fishRefs.current.forEach((el, i) => {
           if (!el) return;
-          const f = fishPool.current[i];
-          if (!f) return;
-          const speed = f.speed * mobileScale;
-          // Recycle fish that have scrolled off the top
-          const topPx = parseFloat(f.topPct) * vh / 100;
-          const visualY = topPx - y * speed;
-          if (visualY < -200) {
-            // Reposition below current view at a random depth
-            const newTopPct = (y + vh * (1.1 + Math.random() * 1.5)) / vh * 100;
-            f.topPct = newTopPct;
-            el.style.top = `${newTopPct}%`;
-          }
+          const speed = (fishPool.current[i]?.speed ?? 0.75) * mobileScale;
           el.style.transform = `translateY(${-y * speed}px)`;
         });
         ticking = false;
