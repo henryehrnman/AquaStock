@@ -734,7 +734,7 @@ export default function AquariumStockr() {
                             </div>
                             {/* value display */}
                             <input
-                              type="number" min={0.1} step={0.1} value={val}
+                              type="text" inputMode="decimal" value={val}
                               onChange={(e) => update(+e.target.value || 0.1)}
                               style={{
                                 width: "100%", padding: "8px 4px", border: "none", outline: "none",
