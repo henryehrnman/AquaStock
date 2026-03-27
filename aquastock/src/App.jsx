@@ -284,6 +284,7 @@ export default function AquariumStockr() {
 
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setFadeIn(false);
     const t = setTimeout(() => setFadeIn(true), 50);
     return () => clearTimeout(t);
