@@ -226,21 +226,19 @@ export default function AquariumStockr() {
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
 
-  // Parallax: update bubble transforms directly on mousemove — no re-renders
+  // Parallax: update bubble transforms directly on scroll — no re-renders
   useEffect(() => {
-    // Depths per bubble (larger = closer = more movement)
     const depths = [0.7, 0.35, 1.0, 0.5, 0.25, 0.8];
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+    const handleScroll = () => {
+      const y = window.scrollY;
       bubbleRefs.current.forEach((el, i) => {
         if (!el) return;
         const d = depths[i] ?? 0.5;
-        el.style.transform = `translate(${x * d * 22}px, ${y * d * 14}px)`;
+        el.style.transform = `translateY(${y * d * 0.25}px)`;
       });
     };
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
