@@ -708,32 +708,53 @@ export default function AquariumStockr() {
               ) : (
                 <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(255,255,255,0.06)" }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 16 }}>
-                    {[["L", tankL, setTankL], ["W", tankW, setTankW], ["H", tankH, setTankH]].map(([lbl, val, setter]) => (
-                      <div key={lbl}>
-                        <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1.5, color: "rgba(176,222,255,0.4)", marginBottom: 6 }}>{lbl} (in)</div>
-                        <input
-                          type="number" min={1} max={240} value={val}
-                          onChange={(e) => {
-                            const v = Math.max(1, +e.target.value || 1);
-                            setter(v);
-                            const newL = lbl === "L" ? v : tankL;
-                            const newW = lbl === "W" ? v : tankW;
-                            const newH = lbl === "H" ? v : tankH;
-                            setTankSize(Math.max(1, Math.round((newL * newW * newH) / 231)));
-                          }}
-                          style={{
-                            width: "100%", padding: "10px 12px", borderRadius: 10,
-                            background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.2)",
-                            color: "#00e5ff", fontSize: 20, fontWeight: 700, fontFamily: "inherit",
-                            textAlign: "center", outline: "none",
-                          }}
-                        />
-                      </div>
-                    ))}
+                    {[["L", tankL, setTankL], ["W", tankW, setTankW], ["H", tankH, setTankH]].map(([lbl, val, setter]) => {
+                      const update = (newVal) => {
+                        const v = Math.max(0.1, Math.round(newVal * 10) / 10);
+                        setter(v);
+                        const newL = lbl === "L" ? v : tankL;
+                        const newW = lbl === "W" ? v : tankW;
+                        const newH = lbl === "H" ? v : tankH;
+                        setTankSize(Math.max(0.1, Math.round((newL * newW * newH) / 231 * 10) / 10));
+                      };
+                      const btnStyle = {
+                        flex: 1, padding: "4px 0", border: "none", cursor: "pointer",
+                        background: "rgba(0,229,255,0.08)", color: "rgba(176,222,255,0.7)",
+                        fontFamily: "inherit", fontSize: 13, fontWeight: 700,
+                        transition: "background 0.15s",
+                      };
+                      return (
+                        <div key={lbl}>
+                          <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1.5, color: "rgba(176,222,255,0.4)", marginBottom: 6 }}>{lbl} (in)</div>
+                          <div style={{ borderRadius: 10, border: "1px solid rgba(0,229,255,0.2)", overflow: "hidden", background: "rgba(0,229,255,0.06)" }}>
+                            {/* +1 / +0.1 row */}
+                            <div style={{ display: "flex", borderBottom: "1px solid rgba(0,229,255,0.1)" }}>
+                              <button onClick={() => update(val + 1)}   style={{ ...btnStyle, borderRight: "1px solid rgba(0,229,255,0.1)", borderRadius: 0 }}>+1</button>
+                              <button onClick={() => update(val + 0.1)} style={{ ...btnStyle, borderRadius: 0 }}>+.1</button>
+                            </div>
+                            {/* value display */}
+                            <input
+                              type="number" min={0.1} step={0.1} value={val}
+                              onChange={(e) => update(+e.target.value || 0.1)}
+                              style={{
+                                width: "100%", padding: "8px 4px", border: "none", outline: "none",
+                                background: "transparent", color: "#00e5ff",
+                                fontSize: 20, fontWeight: 700, fontFamily: "inherit", textAlign: "center",
+                              }}
+                            />
+                            {/* -1 / -0.1 row */}
+                            <div style={{ display: "flex", borderTop: "1px solid rgba(0,229,255,0.1)" }}>
+                              <button onClick={() => update(val - 1)}   style={{ ...btnStyle, borderRight: "1px solid rgba(0,229,255,0.1)", borderRadius: 0 }}>−1</button>
+                              <button onClick={() => update(val - 0.1)} style={{ ...btnStyle, borderRadius: 0 }}>−.1</button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                     <span style={{ fontSize: 12, color: "rgba(176,222,255,0.4)" }}>Calculated volume</span>
-                    <span style={{ fontSize: 24, fontWeight: 700, color: "#00e5ff" }}>{tankSize} <span style={{ fontSize: 14, fontWeight: 400 }}>gal</span></span>
+                    <span style={{ fontSize: 24, fontWeight: 700, color: "#00e5ff" }}>{tankSize.toFixed(1)} <span style={{ fontSize: 14, fontWeight: 400 }}>gal</span></span>
                   </div>
                 </div>
               )}
