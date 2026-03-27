@@ -144,7 +144,7 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {} })
         width: size,
         height: size,
         borderRadius,
-        objectFit: "cover",
+        objectFit: "contain",
         flexShrink: 0,
         ...style,
       }}
