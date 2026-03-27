@@ -222,7 +222,7 @@ function SwimmingFish({ size, top, duration, delay, direction = "right", opacity
   const appearDelay    = useRef(-(Math.random() * 30));
   return (
     // ref on outermost so scroll handler can update both transform (parallax) and top (recycle)
-    <div ref={parallaxRef} style={{
+    <div ref={parallaxRef} className="swim-fish" style={{
       position: "absolute", top, left: 0, width: "100%", pointerEvents: "none",
       willChange: "transform",
       animation: `fish-appear ${appearDuration.current}s ease-in-out infinite`,
@@ -275,7 +275,7 @@ export default function AquariumStockr() {
   const fishRefs = useRef([]);
   // Random fish pool — generated once on mount, covers 0–5000% page depth
   const fishPool = useRef(
-    Array.from({ length: 782 }, (_, i) => {
+    Array.from({ length: window.innerWidth < 640 ? 25 : 782 }, (_, i) => {
       const sizes = [22, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64];
       const size = sizes[i % sizes.length];
       const topPct = i * 32;
@@ -405,6 +405,7 @@ export default function AquariumStockr() {
         }
         @media (max-width: 640px) {
           .bubble-inner { animation-name: float-mobile !important; }
+          .swim-fish { animation: none !important; opacity: 0.08 !important; }
         }
         @keyframes shimmer {
           0% { background-position: -200% center; }
@@ -501,8 +502,8 @@ export default function AquariumStockr() {
         <Bubble parallaxRef={el => bubbleRefs.current[3] = el} style={{ width: 60,  height: 60,  top: "60%", right: "15%" }} />
         <Bubble parallaxRef={el => bubbleRefs.current[4] = el} style={{ width: 35,  height: 35,  top: "80%", left: "40%"  }} />
         <Bubble parallaxRef={el => bubbleRefs.current[5] = el} style={{ width: 90,  height: 90,  top: "5%",  right: "30%" }} />
-        {/* Extra bubbles on results screen — spread across full page depth */}
-        {step === 2 && <>
+        {/* Extra bubbles on results screen — desktop only */}
+        {step === 2 && !isMobile && <>
           {/* First viewport */}
           <Bubble parallaxRef={el => bubbleRefs.current[6]  = el} style={{ width: 70,  height: 70,  top: "20%",  right: "22%" }} />
           <Bubble parallaxRef={el => bubbleRefs.current[7]  = el} style={{ width: 100, height: 100, top: "45%",  left: "3%"  }} />
