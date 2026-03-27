@@ -232,24 +232,19 @@ function ClownfishLogo({ size = 56 }) {
 
 function SwimmingFish({ size, top, duration, delay, direction = "right", opacity = 0.12, parallaxRef }) {
   const anim = direction === "right" ? "swim-right" : "swim-left";
-  // Lock random appear cycle so it doesn't reset on re-render
   const appearDuration = useRef(30 + Math.random() * 40);
   const appearDelay    = useRef(-(Math.random() * 30));
   return (
-    // Outermost: position + random fade in/out
-    <div style={{
+    // ref on outermost so scroll handler can update both transform (parallax) and top (recycle)
+    <div ref={parallaxRef} style={{
       position: "absolute", top, left: 0, width: "100%", pointerEvents: "none",
+      willChange: "transform",
       animation: `fish-appear ${appearDuration.current}s ease-in-out infinite`,
       animationDelay: `${appearDelay.current}s`,
     }}>
-      {/* Parallax scroll tracking via ref */}
-      <div ref={parallaxRef} style={{ willChange: "transform" }}>
-        {/* Horizontal swim animation */}
-        <div style={{ display: "inline-block", animation: `${anim} ${duration}s linear infinite`, animationDelay: `${delay}s`, opacity, willChange: "transform" }}>
-          {/* Flip to face swim direction (SVG faces left by default) */}
-          <div style={{ transform: direction === "right" ? "scaleX(-1)" : undefined }}>
-            <ClownfishLogo size={size} />
-          </div>
+      <div style={{ display: "inline-block", animation: `${anim} ${duration}s linear infinite`, animationDelay: `${delay}s`, opacity, willChange: "transform" }}>
+        <div style={{ transform: direction === "right" ? "scaleX(-1)" : undefined }}>
+          <ClownfishLogo size={size} />
         </div>
       </div>
     </div>
@@ -294,11 +289,13 @@ export default function AquariumStockr() {
   const fishRefs = useRef([]);
   // Random fish pool — generated once on mount, covers 0–5000% page depth
   const fishPool = useRef(
-    Array.from({ length: 80 }, () => {
+    Array.from({ length: 160 }, () => {
       const size = [22, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64][Math.floor(Math.random() * 11)];
+      const topPct = Math.random() * 5000;
       return {
         size,
-        top: `${Math.random() * 5000}%`,
+        topPct,                          // mutable number, updated on recycle
+        top: `${topPct}%`,               // initial CSS value
         duration: Math.round(70 - size * 0.85),
         delay: -(Math.random() * 55),
         direction: Math.random() > 0.5 ? "right" : "left",
@@ -336,9 +333,21 @@ export default function AquariumStockr() {
           const depth = (bubbleSpeeds.current[i] ?? 0.75) * mobileScale;
           el.style.transform = `translateY(${-y * depth}px)`;
         });
+        const vh = window.innerHeight;
         fishRefs.current.forEach((el, i) => {
           if (!el) return;
-          const speed = (fishPool.current[i]?.speed ?? 0.75) * mobileScale;
+          const f = fishPool.current[i];
+          if (!f) return;
+          const speed = f.speed * mobileScale;
+          // Recycle fish that have scrolled off the top
+          const topPx = parseFloat(f.topPct) * vh / 100;
+          const visualY = topPx - y * speed;
+          if (visualY < -200) {
+            // Reposition below current view at a random depth
+            const newTopPct = (y + vh * (1.1 + Math.random() * 1.5)) / vh * 100;
+            f.topPct = newTopPct;
+            el.style.top = `${newTopPct}%`;
+          }
           el.style.transform = `translateY(${-y * speed}px)`;
         });
         ticking = false;
