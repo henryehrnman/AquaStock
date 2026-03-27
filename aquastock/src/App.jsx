@@ -330,13 +330,15 @@ export default function AquariumStockr() {
         ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.3); border-radius: 3px; }
       `}</style>
 
-      {/* Ambient Bubbles */}
-      <Bubble style={{ width: 80, height: 80, top: "10%", left: "5%" }} />
-      <Bubble style={{ width: 40, height: 40, top: "30%", right: "8%" }} />
-      <Bubble style={{ width: 120, height: 120, bottom: "15%", left: "12%" }} />
-      <Bubble style={{ width: 60, height: 60, top: "60%", right: "15%" }} />
-      <Bubble style={{ width: 35, height: 35, top: "80%", left: "40%" }} />
-      <Bubble style={{ width: 90, height: 90, top: "5%", right: "30%" }} />
+      {/* Ambient Bubbles — fixed to viewport so content changes don't move them */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+        <Bubble style={{ width: 80, height: 80, top: "10%", left: "5%" }} />
+        <Bubble style={{ width: 40, height: 40, top: "30%", right: "8%" }} />
+        <Bubble style={{ width: 120, height: 120, bottom: "15%", left: "12%" }} />
+        <Bubble style={{ width: 60, height: 60, top: "60%", right: "15%" }} />
+        <Bubble style={{ width: 35, height: 35, top: "80%", left: "40%" }} />
+        <Bubble style={{ width: 90, height: 90, top: "5%", right: "30%" }} />
+      </div>
 
       {/* Caustics overlay */}
       <div style={{
