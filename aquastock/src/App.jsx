@@ -347,8 +347,6 @@ export default function AquariumStockr() {
           100% { transform: scale(2.5); opacity: 0; }
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { min-height: 100%; background: #081c2e; }
-        body { min-height: 100%; background: linear-gradient(180deg, #0a1628 0%, #0d2137 30%, #0a2a3c 60%, #081c2e 100%); }
         input[type="range"] {
           -webkit-appearance: none;
           appearance: none;
