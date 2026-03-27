@@ -273,7 +273,6 @@ export default function AquariumStockr() {
 
   // Scroll: move bubbles upward 1:1 — rAF throttled to avoid mobile jank
   useEffect(() => {
-    if (isMobile) return; // on mobile keep bubbles fixed, avoid scroll jank
     let ticking = false;
     const handleScroll = () => {
       if (ticking) return;
@@ -289,7 +288,7 @@ export default function AquariumStockr() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isMobile]);
+  }, []);
 
 
   useEffect(() => {
