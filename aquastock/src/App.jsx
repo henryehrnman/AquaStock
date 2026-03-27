@@ -226,15 +226,15 @@ export default function AquariumStockr() {
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
 
-  // Parallax: update bubble transforms directly on scroll — no re-renders
+  // Parallax: scroll bubbles upward as user scrolls down, simulating natural depth
   useEffect(() => {
-    const depths = [0.7, 0.35, 1.0, 0.5, 0.25, 0.8];
+    // Closer (larger) bubbles scroll away faster
+    const speeds = [0.95, 0.75, 1.1, 0.85, 0.65, 1.0];
     const handleScroll = () => {
       const y = window.scrollY;
       bubbleRefs.current.forEach((el, i) => {
         if (!el) return;
-        const d = depths[i] ?? 0.5;
-        el.style.transform = `translateY(${y * d * 0.25}px)`;
+        el.style.transform = `translateY(${-y * (speeds[i] ?? 0.85)}px)`;
       });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
