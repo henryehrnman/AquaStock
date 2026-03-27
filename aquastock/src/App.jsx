@@ -223,8 +223,15 @@ export default function AquariumStockr() {
   const [diffFilter, setDiffFilter] = useState("all");
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [fadeIn, setFadeIn] = useState(true);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
 
   // Parallax: scroll bubbles upward as user scrolls down, simulating natural depth
   useEffect(() => {
@@ -344,6 +351,16 @@ export default function AquariumStockr() {
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.3); border-radius: 3px; }
+        @media (max-width: 640px) {
+          .results-header { flex-direction: column !important; align-items: flex-start !important; }
+          .results-summary { font-size: 11px !important; padding: 8px 12px !important; flex-wrap: wrap !important; gap: 6px !important; }
+          .filters-row { flex-wrap: wrap !important; gap: 8px !important; }
+          .setup-grid { grid-template-columns: 1fr !important; }
+          .species-row { padding: 12px 14px !important; gap: 10px !important; }
+          .detail-top { flex-direction: column !important; align-items: center !important; text-align: center !important; }
+          .detail-tags { justify-content: center !important; }
+          .detail-bars { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* Ambient Bubbles — fixed to viewport, parallax driven via refs */}
@@ -362,18 +379,18 @@ export default function AquariumStockr() {
         background: "radial-gradient(ellipse at 30% 20%, rgba(0,229,255,0.03) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(0,176,255,0.02) 0%, transparent 50%)",
       }} />
 
-      <div style={{ position: "relative", zIndex: 1, maxWidth: 960, margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 960, margin: "0 auto", padding: isMobile ? "0 16px" : "0 24px" }}>
         
         {/* ===== LANDING ===== */}
         {step === 0 && (
           <div style={{
             minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
-            textAlign: "center", gap: 32,
+            textAlign: "center", gap: isMobile ? 20 : 32, padding: isMobile ? "0 20px" : 0,
             opacity: fadeIn ? 1 : 0, transition: "opacity 0.6s ease",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 16, animation: "fadeUp 0.8s ease both" }}>
               <div style={{
-                width: 72, height: 72, borderRadius: 20,
+                width: isMobile ? 52 : 72, height: isMobile ? 52 : 72, borderRadius: 20,
                 background: "linear-gradient(135deg, rgba(0,229,255,0.2), rgba(0,176,255,0.1))",
                 border: "1px solid rgba(0,229,255,0.3)",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -422,7 +439,7 @@ export default function AquariumStockr() {
             </button>
 
             <div style={{
-              display: "flex", gap: 40, marginTop: 20,
+              display: "flex", gap: isMobile ? 20 : 40, marginTop: 20, flexWrap: "wrap", justifyContent: "center",
               animation: "fadeUp 0.8s ease 0.6s both",
             }}>
               {[
@@ -637,17 +654,17 @@ export default function AquariumStockr() {
             opacity: fadeIn ? 1 : 0, transition: "opacity 0.6s ease",
           }}>
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, flexWrap: "wrap", gap: 16, animation: "fadeUp 0.6s ease both" }}>
+            <div className="results-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, flexWrap: "wrap", gap: 16, animation: "fadeUp 0.6s ease both" }}>
               <div>
                 <button onClick={() => setStep(1)} style={{
                   background: "none", border: "none", color: "rgba(176,222,255,0.5)",
                   cursor: "pointer", fontSize: 14, fontFamily: "inherit", marginBottom: 12,
                 }}>← Edit Parameters</button>
-                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, fontWeight: 700 }}>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 24 : 32, fontWeight: 700 }}>
                   Your Matches
                 </h2>
               </div>
-              <div style={{
+              <div className="results-summary" style={{
                 display: "flex", gap: 12, flexWrap: "wrap",
                 background: "rgba(0,0,0,0.2)", padding: "10px 16px", borderRadius: 12,
                 fontSize: 13, color: "rgba(176,222,255,0.6)",
@@ -672,7 +689,7 @@ export default function AquariumStockr() {
                 <h3 style={{ fontSize: 14, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.4)", fontWeight: 600, marginBottom: 16 }}>
                   ✨ Curated Setups For You
                 </h3>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
+                <div className="setup-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
                   {matchingSetups.map((setup) => (
                     <div key={setup.name} className="setup-card" style={{
                       background: setup.gradient, borderRadius: 20, padding: 24,
@@ -836,13 +853,13 @@ export default function AquariumStockr() {
                       return (
                         <div style={{ padding: "0 20px 22px", animation: "fadeUp 0.25s ease both", borderTop: "1px solid rgba(0,229,255,0.07)", marginTop: 2 }}>
                           {/* Top: image + description + tags */}
-                          <div style={{ display: "flex", gap: 18, paddingTop: 18, alignItems: "flex-start" }}>
+                          <div className="detail-top" style={{ display: "flex", gap: 18, paddingTop: 18, alignItems: "flex-start" }}>
                             <SpeciesAvatar species={sp} size={150} borderRadius={14} />
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <p style={{ fontSize: 13.5, color: "rgba(176,222,255,0.65)", lineHeight: 1.75, margin: "0 0 14px" }}>
                                 {sp.desc}
                               </p>
-                              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                              <div className="detail-tags" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                                 {[
                                   { label: sp.water === "freshwater" ? "Freshwater" : "Saltwater", color: sp.water === "freshwater" ? "#00e5ff" : "#00b0ff" },
                                   { label: TYPE_LABELS[sp.type], color: "#b39ddb" },
@@ -859,7 +876,7 @@ export default function AquariumStockr() {
                           </div>
 
                           {/* Parameter bars */}
-                          <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
+                          <div className="detail-bars" style={{ marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
                             {statRows.map(({ label, value, min, max, cur, absMin, absMax }) => {
                               const rangeW = absMax - absMin;
                               const barLeft = ((min - absMin) / rangeW) * 100;
