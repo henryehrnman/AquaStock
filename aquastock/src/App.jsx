@@ -268,6 +268,10 @@ export default function AquariumStockr() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [diffFilter, setDiffFilter] = useState("all");
   const [selectedSpecies, setSelectedSpecies] = useState(null);
+  const [dimMode, setDimMode] = useState(false);
+  const [tankL, setTankL] = useState(24);
+  const [tankW, setTankW] = useState(12);
+  const [tankH, setTankH] = useState(16);
   const [fadeIn, setFadeIn] = useState(true);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
   const resultsRef = useRef(null);
@@ -673,23 +677,66 @@ export default function AquariumStockr() {
 
             {/* Tank Size */}
             <div style={{ animation: "fadeUp 0.6s ease 0.2s both" }}>
-              <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 12 }}>
-                Tank Size
-              </label>
-              <div style={{
-                background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
-                  <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{tankSize}</span>
-                  <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>gallons</span>
-                </div>
-                <input type="range" min={5} max={200} value={tankSize}
-                  onChange={(e) => setTankSize(+e.target.value)} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
-                  <span>5 gal</span><span>200 gal</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600 }}>
+                  Tank Size
+                </label>
+                <div style={{ display: "flex", background: "rgba(255,255,255,0.04)", borderRadius: 20, padding: 3, border: "1px solid rgba(255,255,255,0.08)" }}>
+                  {[["Volume", false], ["Dimensions", true]].map(([label, val]) => (
+                    <button key={label} onClick={() => setDimMode(val)} style={{
+                      padding: "5px 14px", borderRadius: 16, border: "none", cursor: "pointer",
+                      fontSize: 12, fontWeight: 600, fontFamily: "inherit",
+                      background: dimMode === val ? "rgba(0,229,255,0.15)" : "transparent",
+                      color: dimMode === val ? "#00e5ff" : "rgba(176,222,255,0.4)",
+                      transition: "all 0.2s ease",
+                    }}>{label}</button>
+                  ))}
                 </div>
               </div>
+
+              {!dimMode ? (
+                <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+                    <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{tankSize}</span>
+                    <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>gallons</span>
+                  </div>
+                  <input type="range" min={5} max={200} value={tankSize} onChange={(e) => setTankSize(+e.target.value)} />
+                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
+                    <span>5 gal</span><span>200 gal</span>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 16 }}>
+                    {[["L", tankL, setTankL], ["W", tankW, setTankW], ["H", tankH, setTankH]].map(([lbl, val, setter]) => (
+                      <div key={lbl}>
+                        <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1.5, color: "rgba(176,222,255,0.4)", marginBottom: 6 }}>{lbl} (in)</div>
+                        <input
+                          type="number" min={1} max={240} value={val}
+                          onChange={(e) => {
+                            const v = Math.max(1, +e.target.value || 1);
+                            setter(v);
+                            const newL = lbl === "L" ? v : tankL;
+                            const newW = lbl === "W" ? v : tankW;
+                            const newH = lbl === "H" ? v : tankH;
+                            setTankSize(Math.max(1, Math.round((newL * newW * newH) / 231)));
+                          }}
+                          style={{
+                            width: "100%", padding: "10px 12px", borderRadius: 10,
+                            background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.2)",
+                            color: "#00e5ff", fontSize: 20, fontWeight: 700, fontFamily: "inherit",
+                            textAlign: "center", outline: "none",
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                    <span style={{ fontSize: 12, color: "rgba(176,222,255,0.4)" }}>Calculated volume</span>
+                    <span style={{ fontSize: 24, fontWeight: 700, color: "#00e5ff" }}>{tankSize} <span style={{ fontSize: 14, fontWeight: 400 }}>gal</span></span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Temperature */}
