@@ -471,6 +471,9 @@ export default function AquariumStockr() {
           background: rgba(0,229,255,0.06) !important;
           cursor: pointer;
         }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.3); border-radius: 3px; }
