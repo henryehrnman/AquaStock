@@ -236,8 +236,8 @@ function SwimmingFish({ size, top, duration, delay, direction = "right", opacity
     <div ref={parallaxRef} style={{ position: "absolute", top, left: 0, width: "100%", pointerEvents: "none", willChange: "transform" }}>
       {/* Middle: horizontal swim animation */}
       <div style={{ display: "inline-block", animation: `${anim} ${duration}s linear infinite`, animationDelay: `${delay}s`, opacity, willChange: "transform" }}>
-        {/* Inner: flip fish to face the direction it's swimming */}
-        <div style={{ transform: direction === "left" ? "scaleX(-1)" : undefined }}>
+        {/* Inner: flip fish to face the direction it's swimming (SVG faces left by default) */}
+        <div style={{ transform: direction === "right" ? "scaleX(-1)" : undefined }}>
           <ClownfishLogo size={size} />
         </div>
       </div>
