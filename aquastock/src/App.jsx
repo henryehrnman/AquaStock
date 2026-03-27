@@ -269,20 +269,6 @@ export default function AquariumStockr() {
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  // Parallax: scroll bubbles upward as user scrolls down, simulating natural depth
-  useEffect(() => {
-    // Closer (larger) bubbles scroll away faster
-    const speeds = [0.95, 0.75, 1.1, 0.85, 0.65, 1.0];
-    const handleScroll = () => {
-      const y = window.scrollY;
-      bubbleRefs.current.forEach((el, i) => {
-        if (!el) return;
-        el.style.transform = `translateY(${-y * (speeds[i] ?? 0.85)}px)`;
-      });
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     setFadeIn(false);
@@ -399,8 +385,8 @@ export default function AquariumStockr() {
         }
       `}</style>
 
-      {/* Ambient Bubbles — fixed to viewport, parallax driven via refs */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+      {/* Ambient Bubbles — absolute so they scroll out of view naturally */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "100vh", pointerEvents: "none", zIndex: 0 }}>
         <Bubble parallaxRef={el => bubbleRefs.current[0] = el} style={{ width: 80,  height: 80,  top: "10%", left: "5%"   }} />
         <Bubble parallaxRef={el => bubbleRefs.current[1] = el} style={{ width: 40,  height: 40,  top: "30%", right: "8%"  }} />
         <Bubble parallaxRef={el => bubbleRefs.current[2] = el} style={{ width: 120, height: 120, bottom: "15%", left: "12%" }} />
