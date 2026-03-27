@@ -264,6 +264,9 @@ export default function AquariumStockr() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
+  // Per-bubble depth speeds — bigger = closer = more parallax
+  // Indices 0-5: always-visible bubbles; 6-11: results-screen extra bubbles
+  const bubbleSpeeds = useRef([0.90, 0.60, 1.10, 0.75, 0.55, 0.95,  0.70, 1.05, 0.65, 0.85, 1.15, 0.50]);
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 640);
@@ -271,7 +274,7 @@ export default function AquariumStockr() {
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  // Scroll: move bubbles upward 1:1 — rAF throttled to avoid mobile jank
+  // Scroll: move bubbles upward proportional to depth — rAF throttled to avoid mobile jank
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
@@ -279,10 +282,11 @@ export default function AquariumStockr() {
       ticking = true;
       requestAnimationFrame(() => {
         const y = window.scrollY;
-        const speed = window.innerWidth < 640 ? 0.4 : 1;
-        bubbleRefs.current.forEach((el) => {
+        const mobileScale = window.innerWidth < 640 ? 0.4 : 1;
+        bubbleRefs.current.forEach((el, i) => {
           if (!el) return;
-          el.style.transform = `translateY(${-y * speed}px)`;
+          const depth = (bubbleSpeeds.current[i] ?? 0.75) * mobileScale;
+          el.style.transform = `translateY(${-y * depth}px)`;
         });
         ticking = false;
       });
@@ -425,6 +429,15 @@ export default function AquariumStockr() {
         <Bubble parallaxRef={el => bubbleRefs.current[3] = el} style={{ width: 60,  height: 60,  top: "60%", right: "15%" }} />
         <Bubble parallaxRef={el => bubbleRefs.current[4] = el} style={{ width: 35,  height: 35,  top: "80%", left: "40%"  }} />
         <Bubble parallaxRef={el => bubbleRefs.current[5] = el} style={{ width: 90,  height: 90,  top: "5%",  right: "30%" }} />
+        {/* Extra bubbles on results screen */}
+        {step === 2 && <>
+          <Bubble parallaxRef={el => bubbleRefs.current[6]  = el} style={{ width: 70,  height: 70,  top: "20%", right: "22%" }} />
+          <Bubble parallaxRef={el => bubbleRefs.current[7]  = el} style={{ width: 100, height: 100, top: "45%", left: "3%"  }} />
+          <Bubble parallaxRef={el => bubbleRefs.current[8]  = el} style={{ width: 45,  height: 45,  top: "70%", right: "35%" }} />
+          <Bubble parallaxRef={el => bubbleRefs.current[9]  = el} style={{ width: 85,  height: 85,  top: "15%", left: "30%" }} />
+          <Bubble parallaxRef={el => bubbleRefs.current[10] = el} style={{ width: 110, height: 110, bottom: "10%", right: "5%" }} />
+          <Bubble parallaxRef={el => bubbleRefs.current[11] = el} style={{ width: 30,  height: 30,  top: "55%", left: "55%" }} />
+        </>}
       </div>
 
       {/* Caustics overlay */}
