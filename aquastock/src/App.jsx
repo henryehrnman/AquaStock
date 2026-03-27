@@ -279,9 +279,10 @@ export default function AquariumStockr() {
       ticking = true;
       requestAnimationFrame(() => {
         const y = window.scrollY;
+        const speed = window.innerWidth < 640 ? 0.4 : 1;
         bubbleRefs.current.forEach((el) => {
           if (!el) return;
-          el.style.transform = `translateY(${-y}px)`;
+          el.style.transform = `translateY(${-y * speed}px)`;
         });
         ticking = false;
       });
