@@ -3,18 +3,6 @@ import { SPECIES_DB, CURATED_SETUPS } from "./data";
 
 const TYPE_ICONS = { fish: "🐟", invertebrate: "🦐", coral: "🪸", amphibian: "🐸" };
 
-// Pre-generated fish configs covering 0–3000% page depth (stable, no re-generation)
-const SIZES = [22, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64];
-const DEEP_FISH = Array.from({ length: 90 }, (_, i) => {
-  const size = SIZES[i % SIZES.length];
-  const top = `${108 + i * 32}%`;
-  const duration = Math.round(70 - size * 0.85);
-  const delay = -((i * 11 + 3) % 50);
-  const direction = i % 2 === 0 ? "right" : "left";
-  const opacity = size >= 56 ? 0.11 : size >= 44 ? 0.09 : size >= 32 ? 0.07 : 0.05;
-  const speed = 0.35 + (size / 64) * 0.75; // bigger = faster scroll parallax
-  return { size, top, duration, delay, direction, opacity, speed };
-});
 const TYPE_LABELS = { fish: "Fish", invertebrate: "Invertebrates", coral: "Corals", amphibian: "Amphibians" };
 
 // ─── Image cache so we don't re-fetch the same species ───
@@ -304,13 +292,21 @@ export default function AquariumStockr() {
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
   const fishRefs = useRef([]);
-  // Fish scroll speeds — medium depth, vary by size
-  const fishSpeeds = useRef([
-    // 0-5: always-visible first viewport
-    1.05, 0.45, 0.95, 0.55, 0.80, 0.35,
-    // 6+: generated deep fish speeds
-    ...DEEP_FISH.map(f => f.speed),
-  ]);
+  // Random fish pool — generated once on mount, covers 0–5000% page depth
+  const fishPool = useRef(
+    Array.from({ length: 80 }, () => {
+      const size = [22, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64][Math.floor(Math.random() * 11)];
+      return {
+        size,
+        top: `${Math.random() * 5000}%`,
+        duration: Math.round(70 - size * 0.85),
+        delay: -(Math.random() * 55),
+        direction: Math.random() > 0.5 ? "right" : "left",
+        opacity: size >= 56 ? 0.11 : size >= 44 ? 0.09 : size >= 32 ? 0.07 : 0.05,
+        speed: 0.35 + (size / 64) * 0.75,
+      };
+    })
+  );
   // Per-bubble depth speeds — bigger = closer = more parallax
   // Indices 0-5: always-visible; 6-11: results viewport; 12+: results below-fold
   const bubbleSpeeds = useRef([
@@ -342,8 +338,8 @@ export default function AquariumStockr() {
         });
         fishRefs.current.forEach((el, i) => {
           if (!el) return;
-          const depth = (fishSpeeds.current[i] ?? 0.75) * mobileScale;
-          el.style.transform = `translateY(${-y * depth}px)`;
+          const speed = (fishPool.current[i]?.speed ?? 0.75) * mobileScale;
+          el.style.transform = `translateY(${-y * speed}px)`;
         });
         ticking = false;
       });
@@ -503,18 +499,10 @@ export default function AquariumStockr() {
 
       {/* Swimming fish — fixed to viewport, positions extend below fold via parallax */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
-        {/* First viewport (0–100%) — always visible on all screens */}
-        <SwimmingFish parallaxRef={el => fishRefs.current[0]  = el} size={64} top="12%"  duration={16} delay={0}   direction="right" opacity={0.12} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[1]  = el} size={28} top="28%"  duration={44} delay={-18} direction="left"  opacity={0.06} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[2]  = el} size={56} top="48%"  duration={20} delay={-8}  direction="left"  opacity={0.11} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[3]  = el} size={32} top="65%"  duration={40} delay={-25} direction="right" opacity={0.07} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[4]  = el} size={48} top="78%"  duration={24} delay={-12} direction="left"  opacity={0.10} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[5]  = el} size={24} top="90%"  duration={50} delay={-35} direction="right" opacity={0.05} />
-        {/* Deep fish — dynamically generated, cover full page depth up to ~3000% */}
-        {step === 2 && DEEP_FISH.map((f, i) => (
+        {fishPool.current.map((f, i) => (
           <SwimmingFish
             key={i}
-            parallaxRef={el => fishRefs.current[6 + i] = el}
+            parallaxRef={el => fishRefs.current[i] = el}
             size={f.size} top={f.top} duration={f.duration} delay={f.delay}
             direction={f.direction} opacity={f.opacity}
           />
