@@ -229,6 +229,30 @@ function ClownfishLogo({ size = 56 }) {
   );
 }
 
+function SwimmingFish({ size, top, duration, delay, direction = "right", opacity = 0.12 }) {
+  const anim = direction === "right" ? "swim-right" : "swim-left";
+  return (
+    <div style={{
+      position: "absolute",
+      top,
+      left: 0,
+      width: "100%",
+      pointerEvents: "none",
+    }}>
+      <div style={{
+        display: "inline-block",
+        animation: `${anim} ${duration}s linear infinite`,
+        animationDelay: `${delay}s`,
+        opacity,
+        willChange: "transform",
+        imageRendering: "pixelated",
+      }}>
+        <ClownfishLogo size={size} />
+      </div>
+    </div>
+  );
+}
+
 function Bubble({ style, parallaxRef }) {
   const duration = useRef(8 + Math.random() * 12);
   const delay = useRef(Math.random() * 5);
@@ -337,6 +361,23 @@ export default function AquariumStockr() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
         
+        @keyframes swim-right {
+          0%   { transform: translateX(-160px) translateY(0px); }
+          20%  { transform: translateX(20vw)   translateY(-8px); }
+          40%  { transform: translateX(40vw)   translateY(4px); }
+          60%  { transform: translateX(60vw)   translateY(-6px); }
+          80%  { transform: translateX(80vw)   translateY(3px); }
+          100% { transform: translateX(110vw)  translateY(0px); }
+        }
+        @keyframes swim-left {
+          0%   { transform: translateX(110vw)  translateY(0px)  scaleX(-1); }
+          20%  { transform: translateX(80vw)   translateY(-6px) scaleX(-1); }
+          40%  { transform: translateX(60vw)   translateY(4px)  scaleX(-1); }
+          60%  { transform: translateX(40vw)   translateY(-5px) scaleX(-1); }
+          80%  { transform: translateX(20vw)   translateY(3px)  scaleX(-1); }
+          100% { transform: translateX(-160px) translateY(0px)  scaleX(-1); }
+        }
+
         @keyframes float {
           0%   { transform: translateY(0px)   translateX(0px)  scale(1);    }
           25%  { transform: translateY(-20px) translateX(10px) scale(1.04); }
@@ -425,6 +466,16 @@ export default function AquariumStockr() {
           .detail-bars { grid-template-columns: 1fr !important; }
         }
       `}</style>
+
+      {/* Swimming fish — fixed to viewport */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
+        <SwimmingFish size={48}  top="12%"  duration={28} delay={0}    direction="right" opacity={0.10} />
+        <SwimmingFish size={32}  top="35%"  duration={38} delay={-12}  direction="left"  opacity={0.07} />
+        <SwimmingFish size={64}  top="58%"  duration={22} delay={-6}   direction="right" opacity={0.12} />
+        <SwimmingFish size={28}  top="75%"  duration={44} delay={-20}  direction="left"  opacity={0.06} />
+        <SwimmingFish size={56}  top="22%"  duration={32} delay={-16}  direction="left"  opacity={0.09} />
+        <SwimmingFish size={40}  top="88%"  duration={36} delay={-8}   direction="right" opacity={0.08} />
+      </div>
 
       {/* Ambient Bubbles — fixed to viewport */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
