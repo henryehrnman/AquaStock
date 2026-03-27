@@ -289,7 +289,7 @@ export default function AquariumStockr() {
   const fishRefs = useRef([]);
   // Random fish pool — generated once on mount, covers 0–5000% page depth
   const fishPool = useRef(
-    Array.from({ length: 150 }, (_, i) => {
+    Array.from({ length: 782 }, (_, i) => {
       const sizes = [22, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64];
       const size = sizes[i % sizes.length];
       const topPct = i * 32;
