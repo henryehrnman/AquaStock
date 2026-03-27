@@ -311,7 +311,6 @@ export default function AquariumStockr() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(180deg, #0a1628 0%, #0d2137 30%, #0a2a3c 60%, #081c2e 100%)",
       fontFamily: "'Outfit', 'Avenir Next', 'Segoe UI', sans-serif",
       color: "#e0f0ff",
       position: "relative",
