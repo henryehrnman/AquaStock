@@ -269,6 +269,19 @@ export default function AquariumStockr() {
     return () => window.removeEventListener("resize", handler);
   }, []);
 
+  // Scroll: move bubbles upward 1:1 with scroll so they leave the screen naturally
+  useEffect(() => {
+    const handleScroll = () => {
+      const y = window.scrollY;
+      bubbleRefs.current.forEach((el) => {
+        if (!el) return;
+        el.style.transform = `translateY(${-y}px)`;
+      });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
 
   useEffect(() => {
     setFadeIn(false);
