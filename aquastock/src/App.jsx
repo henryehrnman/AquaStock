@@ -49,7 +49,7 @@ const SEARCH_OVERRIDES = {
   "Carpenter's Fairy Wrasse": "Cirrhilabrus carpenterae",
 };
 
-function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {} }) {
+function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {}, onLoad }) {
   // Pre-populate cache from static photo field
   if (photo && !imageCache[name]) imageCache[name] = photo;
 
@@ -150,6 +150,7 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {} })
         flexShrink: 0,
         ...style,
       }}
+      onLoad={onLoad}
       onError={() => {
         imageCache[name] = "NONE";
         setFailed(true);
@@ -160,19 +161,8 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {} })
 
 // Wrapper that shows image or falls back to emoji icon
 function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
-  const [hasImage, setHasImage] = useState(false);
-  const [checked, setChecked] = useState(false);
-
-  useEffect(() => {
-    if (imageCache[species.name] && imageCache[species.name] !== "NONE") {
-      setHasImage(true);
-      setChecked(true);
-    } else if (imageCache[species.name] === "NONE") {
-      setHasImage(false);
-      setChecked(true);
-    }
-    // If not cached yet, wait for SpeciesImage to load
-  }, [species.name]);
+  const cached = imageCache[species.name];
+  const [hasImage, setHasImage] = useState(!!cached && cached !== "NONE");
 
   return (
     <div style={{
@@ -184,12 +174,8 @@ function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
       overflow: "hidden",
       position: "relative",
     }}>
-      {/* Always try to render the image */}
-      <SpeciesImage name={species.name} photo={species.photo} size={size} borderRadius={0} />
-      {/* Show emoji as fallback if image hasn't loaded yet or failed */}
-      {!imageCache[species.name] || imageCache[species.name] === "NONE" ? (
-        <span style={{ position: "absolute" }}>{species.img}</span>
-      ) : null}
+      <SpeciesImage name={species.name} photo={species.photo} size={size} borderRadius={0} onLoad={() => setHasImage(true)} />
+      {!hasImage && <span style={{ position: "absolute" }}>{species.img}</span>}
     </div>
   );
 }
