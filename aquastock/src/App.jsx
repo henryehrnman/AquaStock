@@ -308,7 +308,7 @@ export default function AquariumStockr() {
         
         @keyframes float {
           0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-30px) scale(1.05); }
+          50% { transform: translateY(-12px) scale(1.03); }
         }
         @keyframes shimmer {
           0% { background-position: -200% center; }
@@ -385,8 +385,8 @@ export default function AquariumStockr() {
         }
       `}</style>
 
-      {/* Ambient Bubbles — absolute so they scroll out of view naturally */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "100vh", pointerEvents: "none", zIndex: 0 }}>
+      {/* Ambient Bubbles — fixed to viewport */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
         <Bubble parallaxRef={el => bubbleRefs.current[0] = el} style={{ width: 80,  height: 80,  top: "10%", left: "5%"   }} />
         <Bubble parallaxRef={el => bubbleRefs.current[1] = el} style={{ width: 40,  height: 40,  top: "30%", right: "8%"  }} />
         <Bubble parallaxRef={el => bubbleRefs.current[2] = el} style={{ width: 120, height: 120, bottom: "15%", left: "12%" }} />
