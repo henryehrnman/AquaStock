@@ -1,8 +1,196 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { SPECIES_DB, CURATED_SETUPS } from "./data";
 
 const TYPE_ICONS = { fish: "🐟", invertebrate: "🦐", coral: "🪸", amphibian: "🐸" };
 const TYPE_LABELS = { fish: "Fish", invertebrate: "Invertebrates", coral: "Corals", amphibian: "Amphibians" };
+
+// ─── Image cache so we don't re-fetch the same species ───
+const imageCache = {};
+
+// ─── Wikipedia search terms for better image results ───
+const SEARCH_OVERRIDES = {
+  "Betta Splendens": "Betta fish",
+  "Cherry Shrimp": "Neocaridina davidi red",
+  "Blue Dream Shrimp": "Neocaridina davidi blue",
+  "Orange Sakura Shrimp": "Neocaridina davidi orange",
+  "Yellow Shrimp": "Neocaridina davidi yellow",
+  "Crystal Red Shrimp": "Caridina cantonensis crystal red",
+  "Crystal Black Shrimp": "Caridina cantonensis crystal black",
+  "Ghost Shrimp": "Palaemonetes paludosus",
+  "Amano Shrimp": "Caridina multidentata",
+  "Cleaner Shrimp (Skunk)": "Lysmata amboinensis",
+  "Peppermint Shrimp": "Lysmata wurdemanni",
+  "Sexy Shrimp": "Thor amboinensis",
+  "Yellow Lab (Labidochromis caeruleus)": "Labidochromis caeruleus",
+  "Galaxy Rasbora (Celestial Pearl Danio)": "Celestichthys margaritatus",
+  "Espei Rasbora (Lambchop)": "Trigonostigma espei",
+  "Peacock Cichlid (Aulonocara)": "Aulonocara cichlid",
+  "Shell Dweller (Neolamprologus multifasciatus)": "Neolamprologus multifasciatus",
+  "Blue Leg Hermit Crab": "Clibanarius tricolor",
+  "Scarlet Reef Hermit": "Paguristes cadenati",
+  "Mexican Dwarf Crayfish (CPO)": "Cambarellus patzcuarensis orange",
+  "Blue Crayfish (Procambarus alleni)": "Procambarus alleni",
+  "Fire Belly Newt": "Cynops orientalis",
+  "Dojo/Weather Loach": "Misgurnus anguillicaudatus",
+  "Vampire Pleco (L029)": "Leporacanthicus galaxias",
+  "Axolotl (Leucistic)": "Axolotl leucistic",
+  "Axolotl (GFP/Green Fluorescent)": "Axolotl GFP green fluorescent",
+  "Mexican Axolotl (Wild Type)": "Ambystoma mexicanum",
+  "Bubble Tip Anemone": "Entacmaea quadricolor",
+  "Rock Flower Anemone": "Phymanthus crucifer",
+  "Mushroom Coral (Discosoma)": "Discosoma coral",
+  "Montipora (Plating)": "Montipora coral",
+  "Montipora (Digitata)": "Montipora digitata",
+  "Hammer Coral (Euphyllia)": "Euphyllia ancora",
+  "Torch Coral (Euphyllia)": "Euphyllia glabrescens",
+  "Frogspawn Coral (Euphyllia)": "Euphyllia divisa",
+  "Rhodactis Mushroom": "Rhodactis coral",
+  "Carpenter's Fairy Wrasse": "Cirrhilabrus carpenterae",
+};
+
+function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {} }) {
+  // Pre-populate cache from static photo field
+  if (photo && !imageCache[name]) imageCache[name] = photo;
+
+  const [imgUrl, setImgUrl] = useState(imageCache[name] || null);
+  const [failed, setFailed] = useState(imageCache[name] === "NONE");
+
+  useEffect(() => {
+    if (imageCache[name] === "NONE") { setFailed(true); return; }
+    if (imageCache[name]) { setImgUrl(imageCache[name]); return; }
+
+    let cancelled = false;
+    const searchTerm = SEARCH_OVERRIDES[name] || name;
+
+    // Use Wikipedia API to get the main image for the species
+    const fetchImage = async () => {
+      try {
+        // Try Wikipedia page image first
+        const res = await fetch(
+          `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`
+        );
+        if (!cancelled && res.ok) {
+          const data = await res.json();
+          if (data.thumbnail?.source) {
+            // Get a higher-res version by tweaking the thumbnail URL
+            const hiRes = data.thumbnail.source.replace(/\/\d+px-/, "/300px-");
+            imageCache[name] = hiRes;
+            setImgUrl(hiRes);
+            return;
+          }
+        }
+
+        // Fallback: Wikipedia search API
+        const searchRes = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(searchTerm)}&prop=pageimages&format=json&pithumbsize=300&origin=*`
+        );
+        if (!cancelled && searchRes.ok) {
+          const searchData = await searchRes.json();
+          const pages = searchData.query?.pages;
+          if (pages) {
+            const page = Object.values(pages)[0];
+            if (page?.thumbnail?.source) {
+              imageCache[name] = page.thumbnail.source;
+              setImgUrl(page.thumbnail.source);
+              return;
+            }
+          }
+        }
+
+        // Second fallback: search by query
+        const qRes = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(searchTerm + " aquarium")}&gsrlimit=3&prop=pageimages&format=json&pithumbsize=300&origin=*`
+        );
+        if (!cancelled && qRes.ok) {
+          const qData = await qRes.json();
+          const pages = qData.query?.pages;
+          if (pages) {
+            for (const page of Object.values(pages)) {
+              if (page?.thumbnail?.source) {
+                imageCache[name] = page.thumbnail.source;
+                setImgUrl(page.thumbnail.source);
+                return;
+              }
+            }
+          }
+        }
+
+        if (!cancelled) {
+          imageCache[name] = "NONE";
+          setFailed(true);
+        }
+      } catch {
+        if (!cancelled) {
+          imageCache[name] = "NONE";
+          setFailed(true);
+        }
+      }
+    };
+
+    fetchImage();
+    return () => { cancelled = true; };
+  }, [name]);
+
+  if (failed || !imgUrl) {
+    return null; // Let the parent show fallback emoji
+  }
+
+  return (
+    <img
+      src={imgUrl}
+      alt={name}
+      loading="lazy"
+      style={{
+        width: size,
+        height: size,
+        borderRadius,
+        objectFit: "cover",
+        flexShrink: 0,
+        ...style,
+      }}
+      onError={() => {
+        imageCache[name] = "NONE";
+        setFailed(true);
+      }}
+    />
+  );
+}
+
+// Wrapper that shows image or falls back to emoji icon
+function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
+  const [hasImage, setHasImage] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    if (imageCache[species.name] && imageCache[species.name] !== "NONE") {
+      setHasImage(true);
+      setChecked(true);
+    } else if (imageCache[species.name] === "NONE") {
+      setHasImage(false);
+      setChecked(true);
+    }
+    // If not cached yet, wait for SpeciesImage to load
+  }, [species.name]);
+
+  return (
+    <div style={{
+      width: size, height: size, borderRadius,
+      background: `${species.color || "#00e5ff"}18`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: size > 60 ? 36 : 22, flexShrink: 0,
+      border: `1px solid ${species.color || "#00e5ff"}30`,
+      overflow: "hidden",
+      position: "relative",
+    }}>
+      {/* Always try to render the image */}
+      <SpeciesImage name={species.name} photo={species.photo} size={size} borderRadius={0} />
+      {/* Show emoji as fallback if image hasn't loaded yet or failed */}
+      {!imageCache[species.name] || imageCache[species.name] === "NONE" ? (
+        <span style={{ position: "absolute" }}>{species.img}</span>
+      ) : null}
+    </div>
+  );
+}
 
 function Bubble({ style }) {
   return (
@@ -478,10 +666,12 @@ export default function AquariumStockr() {
                           const sp = SPECIES_DB.find((s) => s.id === sid);
                           return sp ? (
                             <span key={sid} style={{
-                              fontSize: 12, padding: "4px 10px", borderRadius: 20,
+                              fontSize: 12, padding: "3px 4px 3px 3px", borderRadius: 20,
                               background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.8)",
+                              display: "inline-flex", alignItems: "center", gap: 6,
                             }}>
-                              {sp.img} {sp.name}
+                              <SpeciesAvatar species={sp} size={22} borderRadius={10} />
+                              {sp.name}
                             </span>
                           ) : null;
                         })}
@@ -505,15 +695,16 @@ export default function AquariumStockr() {
                       onClick={() => setSelectedSpecies(selectedSpecies?.id === sp.id ? null : sp)}
                       className="card-hover"
                       style={{
-                        minWidth: 160, padding: 20, borderRadius: 16,
+                        minWidth: 160, padding: 16, borderRadius: 16,
                         background: "rgba(255,255,255,0.04)",
                         border: selectedSpecies?.id === sp.id ? `1px solid ${sp.color}44` : "1px solid rgba(255,255,255,0.06)",
                         cursor: "pointer", transition: "all 0.3s ease", textAlign: "center",
                         boxShadow: selectedSpecies?.id === sp.id ? `0 0 20px ${sp.color}22` : "none",
+                        display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
                       }}
                     >
-                      <div style={{ fontSize: 32, marginBottom: 8 }}>{sp.img}</div>
-                      <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{sp.name}</div>
+                      <SpeciesAvatar species={sp} size={72} borderRadius={14} />
+                      <div style={{ fontSize: 14, fontWeight: 600 }}>{sp.name}</div>
                       <div style={{
                         fontSize: 10, textTransform: "uppercase", letterSpacing: 1,
                         color: sp.difficulty === "beginner" ? "#69f0ae" : sp.difficulty === "intermediate" ? "#ffd740" : "#ff5252",
@@ -593,15 +784,7 @@ export default function AquariumStockr() {
                         background: selectedSpecies?.id === sp.id ? "rgba(0,229,255,0.06)" : "transparent",
                       }}
                     >
-                      <div style={{
-                        width: 44, height: 44, borderRadius: 12,
-                        background: `${sp.color}18`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 22, flexShrink: 0,
-                        border: `1px solid ${sp.color}30`,
-                      }}>
-                        {sp.img}
-                      </div>
+                      <SpeciesAvatar species={sp} size={44} borderRadius={12} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 15, fontWeight: 600 }}>{sp.name}</div>
                         <div style={{ fontSize: 12, color: "rgba(176,222,255,0.4)", marginTop: 2 }}>
@@ -624,36 +807,42 @@ export default function AquariumStockr() {
                     {/* Expanded Detail */}
                     {selectedSpecies?.id === sp.id && (
                       <div style={{
-                        padding: "0 24px 20px 84px",
+                        padding: "0 24px 20px 24px",
                         animation: "fadeUp 0.3s ease both",
                       }}>
-                        <p style={{ fontSize: 14, color: "rgba(176,222,255,0.65)", lineHeight: 1.7, marginBottom: 16 }}>
-                          {sp.desc}
-                        </p>
-                        <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 12 }}>
-                          <div>
-                            <span style={{ color: "rgba(176,222,255,0.35)" }}>Temp Range</span>
-                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.tempMin}–{sp.tempMax}°F</div>
-                          </div>
-                          <div>
-                            <span style={{ color: "rgba(176,222,255,0.35)" }}>pH Range</span>
-                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.phMin}–{sp.phMax}</div>
-                          </div>
-                          <div>
-                            <span style={{ color: "rgba(176,222,255,0.35)" }}>GH Range</span>
-                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.ghMin}–{sp.ghMax} dGH</div>
-                          </div>
-                          <div>
-                            <span style={{ color: "rgba(176,222,255,0.35)" }}>KH Range</span>
-                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.khMin}–{sp.khMax} dKH</div>
-                          </div>
-                          <div>
-                            <span style={{ color: "rgba(176,222,255,0.35)" }}>Min Tank</span>
-                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.minTank} gal</div>
-                          </div>
-                          <div>
-                            <span style={{ color: "rgba(176,222,255,0.35)" }}>Grouping</span>
-                            <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.school > 1 ? `${sp.school}+ recommended` : "Can keep solo"}</div>
+                        <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
+                          {/* Large species image */}
+                          <SpeciesAvatar species={sp} size={120} borderRadius={16} />
+                          <div style={{ flex: 1 }}>
+                            <p style={{ fontSize: 14, color: "rgba(176,222,255,0.65)", lineHeight: 1.7, marginBottom: 16 }}>
+                              {sp.desc}
+                            </p>
+                            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 12 }}>
+                              <div>
+                                <span style={{ color: "rgba(176,222,255,0.35)" }}>Temp Range</span>
+                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.tempMin}–{sp.tempMax}°F</div>
+                              </div>
+                              <div>
+                                <span style={{ color: "rgba(176,222,255,0.35)" }}>pH Range</span>
+                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.phMin}–{sp.phMax}</div>
+                              </div>
+                              <div>
+                                <span style={{ color: "rgba(176,222,255,0.35)" }}>GH Range</span>
+                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.ghMin}–{sp.ghMax} dGH</div>
+                              </div>
+                              <div>
+                                <span style={{ color: "rgba(176,222,255,0.35)" }}>KH Range</span>
+                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.khMin}–{sp.khMax} dKH</div>
+                              </div>
+                              <div>
+                                <span style={{ color: "rgba(176,222,255,0.35)" }}>Min Tank</span>
+                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.minTank} gal</div>
+                              </div>
+                              <div>
+                                <span style={{ color: "rgba(176,222,255,0.35)" }}>Grouping</span>
+                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.school > 1 ? `${sp.school}+ recommended` : "Can keep solo"}</div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
