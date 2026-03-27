@@ -193,6 +193,42 @@ function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
   );
 }
 
+function ClownfishLogo({ size = 56 }) {
+  const O = '#FF6B35'; // orange
+  const B = '#0d1117'; // black
+  const W = '#FFFFFF'; // white
+  const _ = null;
+
+  // 16 × 11 pixel grid — right-facing clownfish with dorsal fin + forked tail
+  const grid = [
+    //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+    [ _,  _,  _,  _,  _,  B,  B,  _,  _,  _,  _,  _,  _,  _,  _,  _], // 0 dorsal fin
+    [ _,  _,  _,  _,  B,  O,  O,  B,  _,  _,  _,  _,  _,  _,  _,  _], // 1 dorsal fin
+    [ _,  _,  _,  B,  B,  B,  B,  B,  B,  B,  _,  _,  _,  _,  _,  _], // 2 body top
+    [ _,  _,  B,  O,  O,  B,  W,  B,  O,  O,  B,  _,  _,  B,  _,  _], // 3 tail upper tip
+    [ _,  B,  O,  O,  B,  W,  W,  B,  O,  O,  O,  B,  B,  O,  B,  _], // 4 tail upper fork
+    [ B,  O,  O,  O,  B,  W,  W,  B,  O,  O,  O,  O,  O,  O,  B,  _], // 5
+    [ B,  O,  B,  O,  B,  W,  W,  B,  O,  O,  O,  O,  O,  O,  B,  _], // 6 eye at col 2
+    [ B,  O,  O,  O,  B,  W,  W,  B,  O,  O,  O,  O,  O,  O,  B,  _], // 7
+    [ _,  B,  O,  O,  B,  W,  W,  B,  O,  O,  O,  B,  B,  O,  B,  _], // 8 tail lower fork
+    [ _,  _,  B,  O,  O,  B,  W,  B,  O,  O,  B,  _,  _,  B,  _,  _], // 9 tail lower tip
+    [ _,  _,  _,  B,  B,  B,  B,  B,  B,  B,  _,  _,  _,  _,  _,  _], // 10 body bottom
+  ];
+
+  const cols = 16, rows = 11;
+  const px = size / cols;
+
+  return (
+    <svg width={size} height={Math.round(rows * px)} viewBox={`0 0 ${cols} ${rows}`} shapeRendering="crispEdges">
+      {grid.map((row, y) =>
+        row.map((color, x) =>
+          color ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={color} /> : null
+        )
+      )}
+    </svg>
+  );
+}
+
 function Bubble({ style, parallaxRef }) {
   const duration = useRef(8 + Math.random() * 12);
   const delay = useRef(Math.random() * 5);
@@ -394,9 +430,9 @@ export default function AquariumStockr() {
                 background: "linear-gradient(135deg, rgba(0,229,255,0.2), rgba(0,176,255,0.1))",
                 border: "1px solid rgba(0,229,255,0.3)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 36, boxShadow: "0 0 40px rgba(0,229,255,0.15)",
+                boxShadow: "0 0 40px rgba(0,229,255,0.15)",
               }}>
-                🌊
+                <ClownfishLogo size={isMobile ? 38 : 52} />
               </div>
               <h1 style={{
                 fontFamily: "'Playfair Display', Georgia, serif",
