@@ -269,6 +269,7 @@ export default function AquariumStockr() {
   const [diffFilter, setDiffFilter] = useState("all");
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [dimMode, setDimMode] = useState(false);
+  const [showParams, setShowParams] = useState(false);
   const [tankL, setTankL] = useState(24);
   const [tankW, setTankW] = useState(12);
   const [tankH, setTankH] = useState(16);
@@ -347,17 +348,18 @@ export default function AquariumStockr() {
   const compatible = SPECIES_DB.filter((s) => {
     if (s.water !== waterType) return false;
     if (s.minTank > tankSize) return false;
-    if (temp < s.tempMin || temp > s.tempMax) return false;
-    if (ph < s.phMin || ph > s.phMax) return false;
-    if (gh < s.ghMin || gh > s.ghMax) return false;
-    if (kh < s.khMin || kh > s.khMax) return false;
+    if (showParams && (temp < s.tempMin || temp > s.tempMax)) return false;
+    if (showParams && (ph < s.phMin || ph > s.phMax)) return false;
+    if (showParams && (gh < s.ghMin || gh > s.ghMax)) return false;
+    if (showParams && (kh < s.khMin || kh > s.khMax)) return false;
     if (typeFilter !== "all" && s.type !== typeFilter) return false;
     if (diffFilter !== "all" && s.difficulty !== diffFilter) return false;
     return true;
   });
 
   const popularPicks = SPECIES_DB.filter(
-    (s) => s.popular && s.water === waterType && s.minTank <= tankSize && temp >= s.tempMin && temp <= s.tempMax && ph >= s.phMin && ph <= s.phMax && gh >= s.ghMin && gh <= s.ghMax && kh >= s.khMin && kh <= s.khMax
+    (s) => s.popular && s.water === waterType && s.minTank <= tankSize &&
+    (!showParams || (temp >= s.tempMin && temp <= s.tempMax && ph >= s.phMin && ph <= s.phMax && gh >= s.ghMin && gh <= s.ghMax && kh >= s.khMin && kh <= s.khMax))
   );
 
   const matchingSetups = CURATED_SETUPS.filter((s) => s.water === waterType && s.minTank <= tankSize);
@@ -763,96 +765,78 @@ export default function AquariumStockr() {
               )}
             </div>
 
-            {/* Temperature */}
+            {/* Water Parameters — optional */}
             <div style={{ animation: "fadeUp 0.6s ease 0.3s both" }}>
-              <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 12 }}>
-                Temperature
-              </label>
-              <div style={{
-                background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
-                  <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{temp}°F</span>
-                  <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>
-                    {temp < 70 ? "Cold" : temp < 78 ? "Moderate" : temp < 84 ? "Warm" : "Tropical"}
-                  </span>
-                </div>
-                <input type="range" min={58} max={90} value={temp}
-                  onChange={(e) => setTemp(+e.target.value)} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
-                  <span>58°F</span><span>90°F</span>
-                </div>
-              </div>
-            </div>
+              <button
+                onClick={() => setShowParams(p => !p)}
+                style={{
+                  width: "100%", padding: "16px 20px", borderRadius: 16,
+                  background: showParams ? "rgba(0,229,255,0.08)" : "rgba(255,255,255,0.03)",
+                  border: showParams ? "1px solid rgba(0,229,255,0.3)" : "1px dashed rgba(176,222,255,0.2)",
+                  color: showParams ? "#00e5ff" : "rgba(176,222,255,0.5)",
+                  cursor: "pointer", fontFamily: "inherit", fontSize: 14, fontWeight: 600,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <span>{showParams ? "Water Parameters" : "+ Add Water Parameters"}</span>
+                <span style={{ fontSize: 12, opacity: 0.6 }}>
+                  {showParams ? "Temp · pH · GH · KH  ✕" : "optional — filters by your water chemistry"}
+                </span>
+              </button>
 
-            {/* pH */}
-            <div style={{ animation: "fadeUp 0.6s ease 0.4s both" }}>
-              <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 12 }}>
-                pH Level
-              </label>
-              <div style={{
-                background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
-                  <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{ph.toFixed(1)}</span>
-                  <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>
-                    {ph < 6.5 ? "Acidic" : ph < 7.5 ? "Neutral" : ph < 8.0 ? "Slightly Alkaline" : "Alkaline"}
-                  </span>
+              {showParams && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 16 }}>
+                  {/* Temperature */}
+                  <div>
+                    <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 10 }}>Temperature</label>
+                    <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
+                        <span style={{ fontSize: 28, fontWeight: 700, color: "#00e5ff" }}>{temp}°F</span>
+                        <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 13 }}>{temp < 70 ? "Cold" : temp < 78 ? "Moderate" : temp < 84 ? "Warm" : "Tropical"}</span>
+                      </div>
+                      <input type="range" min={58} max={90} value={temp} onChange={(e) => setTemp(+e.target.value)} />
+                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: "rgba(176,222,255,0.3)" }}><span>58°F</span><span>90°F</span></div>
+                    </div>
+                  </div>
+                  {/* pH */}
+                  <div>
+                    <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 10 }}>pH Level</label>
+                    <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
+                        <span style={{ fontSize: 28, fontWeight: 700, color: "#00e5ff" }}>{ph.toFixed(1)}</span>
+                        <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 13 }}>{ph < 6.5 ? "Acidic" : ph < 7.5 ? "Neutral" : ph < 8.0 ? "Slightly Alkaline" : "Alkaline"}</span>
+                      </div>
+                      <input type="range" min={50} max={90} value={ph * 10} onChange={(e) => setPh(+(e.target.value / 10).toFixed(1))} />
+                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: "rgba(176,222,255,0.3)" }}><span>5.0</span><span>9.0</span></div>
+                    </div>
+                  </div>
+                  {/* GH */}
+                  <div>
+                    <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 10 }}>GH — General Hardness</label>
+                    <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
+                        <span style={{ fontSize: 28, fontWeight: 700, color: "#00e5ff" }}>{gh} <span style={{ fontSize: 14, fontWeight: 400 }}>dGH</span></span>
+                        <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 13 }}>{gh <= 4 ? "Very Soft" : gh <= 8 ? "Soft" : gh <= 12 ? "Moderate" : gh <= 18 ? "Hard" : "Very Hard"}</span>
+                      </div>
+                      <input type="range" min={0} max={25} value={gh} onChange={(e) => setGh(+e.target.value)} />
+                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: "rgba(176,222,255,0.3)" }}><span>0 dGH</span><span>25 dGH</span></div>
+                    </div>
+                  </div>
+                  {/* KH */}
+                  <div>
+                    <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 10 }}>KH — Carbonate Hardness</label>
+                    <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
+                        <span style={{ fontSize: 28, fontWeight: 700, color: "#00e5ff" }}>{kh} <span style={{ fontSize: 14, fontWeight: 400 }}>dKH</span></span>
+                        <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 13 }}>{kh <= 3 ? "Very Low" : kh <= 6 ? "Low" : kh <= 9 ? "Moderate" : kh <= 12 ? "High" : "Very High"}</span>
+                      </div>
+                      <input type="range" min={0} max={15} value={kh} onChange={(e) => setKh(+e.target.value)} />
+                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: "rgba(176,222,255,0.3)" }}><span>0 dKH</span><span>15 dKH</span></div>
+                    </div>
+                  </div>
                 </div>
-                <input type="range" min={50} max={90} value={ph * 10}
-                  onChange={(e) => setPh(+(e.target.value / 10).toFixed(1))} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
-                  <span>5.0</span><span>9.0</span>
-                </div>
-              </div>
-            </div>
-
-            {/* GH */}
-            <div style={{ animation: "fadeUp 0.6s ease 0.5s both" }}>
-              <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 12 }}>
-                GH — General Hardness
-              </label>
-              <div style={{
-                background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
-                  <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{gh} <span style={{ fontSize: 16, fontWeight: 400 }}>dGH</span></span>
-                  <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>
-                    {gh <= 4 ? "Very Soft" : gh <= 8 ? "Soft" : gh <= 12 ? "Moderate" : gh <= 18 ? "Hard" : "Very Hard"}
-                  </span>
-                </div>
-                <input type="range" min={0} max={25} value={gh}
-                  onChange={(e) => setGh(+e.target.value)} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
-                  <span>0 dGH</span><span>25 dGH</span>
-                </div>
-              </div>
-            </div>
-
-            {/* KH */}
-            <div style={{ animation: "fadeUp 0.6s ease 0.6s both" }}>
-              <label style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.5)", fontWeight: 600, display: "block", marginBottom: 12 }}>
-                KH — Carbonate Hardness
-              </label>
-              <div style={{
-                background: "rgba(255,255,255,0.03)", borderRadius: 16, padding: "20px 24px",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
-                  <span style={{ fontSize: 32, fontWeight: 700, color: "#00e5ff" }}>{kh} <span style={{ fontSize: 16, fontWeight: 400 }}>dKH</span></span>
-                  <span style={{ color: "rgba(176,222,255,0.4)", fontSize: 14 }}>
-                    {kh <= 3 ? "Very Low" : kh <= 6 ? "Low" : kh <= 9 ? "Moderate" : kh <= 12 ? "High" : "Very High"}
-                  </span>
-                </div>
-                <input type="range" min={0} max={15} value={kh}
-                  onChange={(e) => setKh(+e.target.value)} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
-                  <span>0 dKH</span><span>15 dKH</span>
-                </div>
-              </div>
+              )}
             </div>
 
             <button
