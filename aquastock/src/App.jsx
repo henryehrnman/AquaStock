@@ -194,6 +194,8 @@ function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
 }
 
 function Bubble({ style }) {
+  const duration = useRef(8 + Math.random() * 12);
+  const delay = useRef(Math.random() * 5);
   return (
     <div
       style={{
@@ -201,8 +203,8 @@ function Bubble({ style }) {
         borderRadius: "50%",
         background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0.02))",
         border: "1px solid rgba(255,255,255,0.06)",
-        animation: `float ${8 + Math.random() * 12}s ease-in-out infinite`,
-        animationDelay: `${Math.random() * 5}s`,
+        animation: `float ${duration.current}s ease-in-out infinite`,
+        animationDelay: `${delay.current}s`,
         ...style,
       }}
     />
