@@ -292,7 +292,14 @@ export default function AquariumStockr() {
   const bubbleRefs = useRef([]);
   const fishRefs = useRef([]);
   // Fish scroll speeds — medium depth, vary by size
-  const fishSpeeds = useRef([1.05, 0.45, 0.95, 0.55, 0.80, 0.35]); // matches fish sizes: 64,28,56,32,48,24
+  const fishSpeeds = useRef([
+    // 0-5: always-visible (first viewport)
+    1.05, 0.45, 0.95, 0.55, 0.80, 0.35,
+    // 6-19: results screen deeper fish
+    0.90, 0.50, 1.00, 0.40, 0.70, 0.60,
+    0.85, 0.45, 1.05, 0.35, 0.75, 0.55,
+    0.95, 0.40,
+  ]);
   // Per-bubble depth speeds — bigger = closer = more parallax
   // Indices 0-5: always-visible; 6-11: results viewport; 12+: results below-fold
   const bubbleSpeeds = useRef([
@@ -483,15 +490,32 @@ export default function AquariumStockr() {
         }
       `}</style>
 
-      {/* Swimming fish — fixed to viewport */}
+      {/* Swimming fish — fixed to viewport, positions extend below fold via parallax */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
-        {/* size → duration: bigger = closer = faster swim */}
-        <SwimmingFish parallaxRef={el => fishRefs.current[0] = el} size={64}  top="12%"  duration={16} delay={0}    direction="right" opacity={0.12} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[1] = el} size={28}  top="28%"  duration={44} delay={-18}  direction="left"  opacity={0.06} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[2] = el} size={56}  top="48%"  duration={20} delay={-8}   direction="left"  opacity={0.11} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[3] = el} size={32}  top="65%"  duration={40} delay={-25}  direction="right" opacity={0.07} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[4] = el} size={48}  top="78%"  duration={24} delay={-12}  direction="left"  opacity={0.10} />
-        <SwimmingFish parallaxRef={el => fishRefs.current[5] = el} size={24}  top="90%"  duration={50} delay={-35}  direction="right" opacity={0.05} />
+        {/* First viewport (0–100%) — always visible on all screens */}
+        <SwimmingFish parallaxRef={el => fishRefs.current[0]  = el} size={64} top="12%"  duration={16} delay={0}   direction="right" opacity={0.12} />
+        <SwimmingFish parallaxRef={el => fishRefs.current[1]  = el} size={28} top="28%"  duration={44} delay={-18} direction="left"  opacity={0.06} />
+        <SwimmingFish parallaxRef={el => fishRefs.current[2]  = el} size={56} top="48%"  duration={20} delay={-8}  direction="left"  opacity={0.11} />
+        <SwimmingFish parallaxRef={el => fishRefs.current[3]  = el} size={32} top="65%"  duration={40} delay={-25} direction="right" opacity={0.07} />
+        <SwimmingFish parallaxRef={el => fishRefs.current[4]  = el} size={48} top="78%"  duration={24} delay={-12} direction="left"  opacity={0.10} />
+        <SwimmingFish parallaxRef={el => fishRefs.current[5]  = el} size={24} top="90%"  duration={50} delay={-35} direction="right" opacity={0.05} />
+        {/* Deeper fish — scroll into view on results screen */}
+        {step === 2 && <>
+          <SwimmingFish parallaxRef={el => fishRefs.current[6]  = el} size={52} top="108%" duration={22} delay={-5}  direction="right" opacity={0.10} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[7]  = el} size={30} top="125%" duration={46} delay={-20} direction="left"  opacity={0.06} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[8]  = el} size={60} top="145%" duration={18} delay={-10} direction="left"  opacity={0.12} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[9]  = el} size={26} top="162%" duration={52} delay={-30} direction="right" opacity={0.05} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[10] = el} size={44} top="178%" duration={28} delay={-15} direction="right" opacity={0.09} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[11] = el} size={36} top="195%" duration={36} delay={-40} direction="left"  opacity={0.07} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[12] = el} size={58} top="215%" duration={19} delay={-7}  direction="right" opacity={0.11} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[13] = el} size={22} top="235%" duration={55} delay={-22} direction="left"  opacity={0.05} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[14] = el} size={50} top="255%" duration={23} delay={-14} direction="left"  opacity={0.10} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[15] = el} size={34} top="275%" duration={38} delay={-32} direction="right" opacity={0.07} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[16] = el} size={62} top="295%" duration={17} delay={-3}  direction="left"  opacity={0.12} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[17] = el} size={28} top="318%" duration={48} delay={-26} direction="right" opacity={0.06} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[18] = el} size={46} top="345%" duration={26} delay={-18} direction="right" opacity={0.09} />
+          <SwimmingFish parallaxRef={el => fishRefs.current[19] = el} size={32} top="375%" duration={42} delay={-38} direction="left"  opacity={0.07} />
+        </>}
       </div>
 
       {/* Ambient Bubbles — fixed to viewport */}
