@@ -320,8 +320,11 @@ export default function AquariumStockr() {
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
         
         @keyframes float {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-12px) scale(1.03); }
+          0%   { transform: translateY(0px)   translateX(0px)  scale(1);    }
+          25%  { transform: translateY(-20px) translateX(10px) scale(1.04); }
+          50%  { transform: translateY(-28px) translateX(0px)  scale(1.06); }
+          75%  { transform: translateY(-14px) translateX(-8px) scale(1.03); }
+          100% { transform: translateY(0px)   translateX(0px)  scale(1);    }
         }
         @keyframes shimmer {
           0% { background-position: -200% center; }
