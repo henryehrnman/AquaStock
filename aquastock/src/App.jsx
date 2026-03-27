@@ -810,48 +810,76 @@ export default function AquariumStockr() {
                     </div>
 
                     {/* Expanded Detail */}
-                    {selectedSpecies?.id === sp.id && (
-                      <div style={{
-                        padding: "0 24px 20px 24px",
-                        animation: "fadeUp 0.3s ease both",
-                      }}>
-                        <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-                          {/* Large species image */}
-                          <SpeciesAvatar species={sp} size={120} borderRadius={16} />
-                          <div style={{ flex: 1 }}>
-                            <p style={{ fontSize: 14, color: "rgba(176,222,255,0.65)", lineHeight: 1.7, marginBottom: 16 }}>
-                              {sp.desc}
-                            </p>
-                            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 12 }}>
-                              <div>
-                                <span style={{ color: "rgba(176,222,255,0.35)" }}>Temp Range</span>
-                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.tempMin}–{sp.tempMax}°F</div>
-                              </div>
-                              <div>
-                                <span style={{ color: "rgba(176,222,255,0.35)" }}>pH Range</span>
-                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.phMin}–{sp.phMax}</div>
-                              </div>
-                              <div>
-                                <span style={{ color: "rgba(176,222,255,0.35)" }}>GH Range</span>
-                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.ghMin}–{sp.ghMax} dGH</div>
-                              </div>
-                              <div>
-                                <span style={{ color: "rgba(176,222,255,0.35)" }}>KH Range</span>
-                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.khMin}–{sp.khMax} dKH</div>
-                              </div>
-                              <div>
-                                <span style={{ color: "rgba(176,222,255,0.35)" }}>Min Tank</span>
-                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.minTank} gal</div>
-                              </div>
-                              <div>
-                                <span style={{ color: "rgba(176,222,255,0.35)" }}>Grouping</span>
-                                <div style={{ fontWeight: 600, marginTop: 2, color: "#00e5ff" }}>{sp.school > 1 ? `${sp.school}+ recommended` : "Can keep solo"}</div>
+                    {selectedSpecies?.id === sp.id && (() => {
+                      const statRows = [
+                        { label: "Temperature", value: `${sp.tempMin}–${sp.tempMax}°F`, min: sp.tempMin, max: sp.tempMax, cur: temp, absMin: 55, absMax: 95 },
+                        { label: "pH", value: `${sp.phMin}–${sp.phMax}`, min: sp.phMin, max: sp.phMax, cur: ph, absMin: 4, absMax: 9.5 },
+                        { label: "GH", value: `${sp.ghMin}–${sp.ghMax} dGH`, min: sp.ghMin, max: sp.ghMax, cur: gh, absMin: 0, absMax: 25 },
+                        { label: "KH", value: `${sp.khMin}–${sp.khMax} dKH`, min: sp.khMin, max: sp.khMax, cur: kh, absMin: 0, absMax: 15 },
+                      ];
+                      return (
+                        <div style={{ padding: "0 20px 22px", animation: "fadeUp 0.25s ease both", borderTop: "1px solid rgba(0,229,255,0.07)", marginTop: 2 }}>
+                          {/* Top: image + description + tags */}
+                          <div style={{ display: "flex", gap: 18, paddingTop: 18, alignItems: "flex-start" }}>
+                            <SpeciesAvatar species={sp} size={150} borderRadius={14} />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ fontSize: 13.5, color: "rgba(176,222,255,0.65)", lineHeight: 1.75, margin: "0 0 14px" }}>
+                                {sp.desc}
+                              </p>
+                              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                {[
+                                  { label: sp.water === "freshwater" ? "Freshwater" : "Saltwater", color: sp.water === "freshwater" ? "#00e5ff" : "#00b0ff" },
+                                  { label: TYPE_LABELS[sp.type], color: "#b39ddb" },
+                                  { label: `Min ${sp.minTank} gal`, color: "#80cbc4" },
+                                  { label: sp.school > 1 ? `School of ${sp.school}+` : "Solo", color: "#ffcc80" },
+                                ].map(({ label, color }) => (
+                                  <span key={label} style={{
+                                    fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20,
+                                    background: `${color}18`, color, border: `1px solid ${color}30`,
+                                  }}>{label}</span>
+                                ))}
                               </div>
                             </div>
                           </div>
+
+                          {/* Parameter bars */}
+                          <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
+                            {statRows.map(({ label, value, min, max, cur, absMin, absMax }) => {
+                              const rangeW = absMax - absMin;
+                              const barLeft = ((min - absMin) / rangeW) * 100;
+                              const barWidth = ((max - min) / rangeW) * 100;
+                              const markerPos = ((cur - absMin) / rangeW) * 100;
+                              const inRange = cur >= min && cur <= max;
+                              return (
+                                <div key={label}>
+                                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                                    <span style={{ fontSize: 11, color: "rgba(176,222,255,0.4)", fontWeight: 500 }}>{label}</span>
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: inRange ? "#00e5ff" : "#ff5252" }}>{value}</span>
+                                  </div>
+                                  <div style={{ position: "relative", height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "visible" }}>
+                                    {/* Species range bar */}
+                                    <div style={{
+                                      position: "absolute", top: 0, height: "100%", borderRadius: 4,
+                                      left: `${barLeft}%`, width: `${barWidth}%`,
+                                      background: inRange ? "rgba(0,229,255,0.5)" : "rgba(255,82,82,0.4)",
+                                    }} />
+                                    {/* Current value marker */}
+                                    <div style={{
+                                      position: "absolute", top: "50%", transform: "translate(-50%, -50%)",
+                                      left: `${Math.min(Math.max(markerPos, 2), 98)}%`,
+                                      width: 10, height: 10, borderRadius: "50%",
+                                      background: inRange ? "#00e5ff" : "#ff5252",
+                                      border: "2px solid rgba(10,14,26,0.8)",
+                                      zIndex: 1,
+                                    }} />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
 
                     {i < compatible.length - 1 && (
                       <div style={{ height: 1, background: "rgba(255,255,255,0.04)", margin: "0 24px" }} />
