@@ -193,21 +193,21 @@ function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
   );
 }
 
-function Bubble({ style }) {
+function Bubble({ style, parallaxRef }) {
   const duration = useRef(8 + Math.random() * 12);
   const delay = useRef(Math.random() * 5);
   return (
-    <div
-      style={{
-        position: "absolute",
-        borderRadius: "50%",
+    // Outer div: handles parallax translation via ref (no re-renders)
+    <div ref={parallaxRef} style={{ position: "absolute", willChange: "transform", ...style }}>
+      {/* Inner div: handles CSS float animation independently */}
+      <div style={{
+        width: "100%", height: "100%", borderRadius: "50%",
         background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0.02))",
         border: "1px solid rgba(255,255,255,0.06)",
         animation: `float ${duration.current}s ease-in-out infinite`,
         animationDelay: `${delay.current}s`,
-        ...style,
-      }}
-    />
+      }} />
+    </div>
   );
 }
 
@@ -224,6 +224,24 @@ export default function AquariumStockr() {
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [fadeIn, setFadeIn] = useState(true);
   const resultsRef = useRef(null);
+  const bubbleRefs = useRef([]);
+
+  // Parallax: update bubble transforms directly on mousemove — no re-renders
+  useEffect(() => {
+    // Depths per bubble (larger = closer = more movement)
+    const depths = [0.7, 0.35, 1.0, 0.5, 0.25, 0.8];
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      bubbleRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const d = depths[i] ?? 0.5;
+        el.style.transform = `translate(${x * d * 22}px, ${y * d * 14}px)`;
+      });
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   useEffect(() => {
     setFadeIn(false);
@@ -330,14 +348,14 @@ export default function AquariumStockr() {
         ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.3); border-radius: 3px; }
       `}</style>
 
-      {/* Ambient Bubbles — fixed to viewport so content changes don't move them */}
+      {/* Ambient Bubbles — fixed to viewport, parallax driven via refs */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
-        <Bubble style={{ width: 80, height: 80, top: "10%", left: "5%" }} />
-        <Bubble style={{ width: 40, height: 40, top: "30%", right: "8%" }} />
-        <Bubble style={{ width: 120, height: 120, bottom: "15%", left: "12%" }} />
-        <Bubble style={{ width: 60, height: 60, top: "60%", right: "15%" }} />
-        <Bubble style={{ width: 35, height: 35, top: "80%", left: "40%" }} />
-        <Bubble style={{ width: 90, height: 90, top: "5%", right: "30%" }} />
+        <Bubble parallaxRef={el => bubbleRefs.current[0] = el} style={{ width: 80,  height: 80,  top: "10%", left: "5%"   }} />
+        <Bubble parallaxRef={el => bubbleRefs.current[1] = el} style={{ width: 40,  height: 40,  top: "30%", right: "8%"  }} />
+        <Bubble parallaxRef={el => bubbleRefs.current[2] = el} style={{ width: 120, height: 120, bottom: "15%", left: "12%" }} />
+        <Bubble parallaxRef={el => bubbleRefs.current[3] = el} style={{ width: 60,  height: 60,  top: "60%", right: "15%" }} />
+        <Bubble parallaxRef={el => bubbleRefs.current[4] = el} style={{ width: 35,  height: 35,  top: "80%", left: "40%"  }} />
+        <Bubble parallaxRef={el => bubbleRefs.current[5] = el} style={{ width: 90,  height: 90,  top: "5%",  right: "30%" }} />
       </div>
 
       {/* Caustics overlay */}
