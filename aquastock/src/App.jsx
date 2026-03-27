@@ -141,10 +141,11 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {} })
       alt={name}
       loading="lazy"
       style={{
-        width: size,
         height: size,
+        width: "auto",
+        maxWidth: size * 2,
         borderRadius,
-        objectFit: "contain",
+        display: "block",
         flexShrink: 0,
         ...style,
       }}
@@ -174,7 +175,7 @@ function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
 
   return (
     <div style={{
-      width: size, height: size, borderRadius,
+      height: size, width: "auto", minWidth: size, maxWidth: size * 2, borderRadius,
       background: `${species.color || "#00e5ff"}18`,
       display: "flex", alignItems: "center", justifyContent: "center",
       fontSize: size > 60 ? 36 : 22, flexShrink: 0,
@@ -784,7 +785,7 @@ export default function AquariumStockr() {
                         background: selectedSpecies?.id === sp.id ? "rgba(0,229,255,0.06)" : "transparent",
                       }}
                     >
-                      <SpeciesAvatar species={sp} size={44} borderRadius={12} />
+                      <SpeciesAvatar species={sp} size={64} borderRadius={12} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 15, fontWeight: 600 }}>{sp.name}</div>
                         <div style={{ fontSize: 12, color: "rgba(176,222,255,0.4)", marginTop: 2 }}>
