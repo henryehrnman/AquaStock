@@ -236,12 +236,14 @@ function Bubble({ style, parallaxRef }) {
     // Outer div: handles parallax translation via ref (no re-renders)
     <div ref={parallaxRef} style={{ position: "absolute", willChange: "transform", ...style }}>
       {/* Inner div: handles CSS float animation independently */}
-      <div style={{
+      <div className="bubble-inner" style={{
         width: "100%", height: "100%", borderRadius: "50%",
         background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0.02))",
         border: "1px solid rgba(255,255,255,0.06)",
         animation: `float ${duration.current}s ease-in-out infinite`,
         animationDelay: `${delay.current}s`,
+        willChange: "transform",
+        transform: "translateZ(0)",
       }} />
     </div>
   );
@@ -269,18 +271,25 @@ export default function AquariumStockr() {
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  // Scroll: move bubbles upward 1:1 with scroll so they leave the screen naturally
+  // Scroll: move bubbles upward 1:1 — rAF throttled to avoid mobile jank
   useEffect(() => {
+    if (isMobile) return; // on mobile keep bubbles fixed, avoid scroll jank
+    let ticking = false;
     const handleScroll = () => {
-      const y = window.scrollY;
-      bubbleRefs.current.forEach((el) => {
-        if (!el) return;
-        el.style.transform = `translateY(${-y}px)`;
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        bubbleRefs.current.forEach((el) => {
+          if (!el) return;
+          el.style.transform = `translateY(${-y}px)`;
+        });
+        ticking = false;
       });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMobile]);
 
 
   useEffect(() => {
@@ -325,6 +334,13 @@ export default function AquariumStockr() {
           50%  { transform: translateY(-28px) translateX(0px)  scale(1.06); }
           75%  { transform: translateY(-14px) translateX(-8px) scale(1.03); }
           100% { transform: translateY(0px)   translateX(0px)  scale(1);    }
+        }
+        @keyframes float-mobile {
+          0%, 100% { transform: translateY(0px); }
+          50%      { transform: translateY(-14px); }
+        }
+        @media (max-width: 640px) {
+          .bubble-inner { animation-name: float-mobile !important; }
         }
         @keyframes shimmer {
           0% { background-position: -200% center; }
