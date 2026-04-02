@@ -80,7 +80,7 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {}, o
             return;
           }
         }
-
+        
         // Fallback: Wikipedia search API
         const searchRes = await fetch(
           `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(searchTerm)}&prop=pageimages&format=json&pithumbsize=300&origin=*`
@@ -275,6 +275,8 @@ export default function AquariumStockr() {
   const [tankH, setTankH] = useState(16);
   const [fadeIn, setFadeIn] = useState(true);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
+  const [stockList, setStockList] = useState([]); // [{id, count}]
+  const [stockTypeFilter, setStockTypeFilter] = useState("all");
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
   const fishRefs = useRef([]);
@@ -344,6 +346,53 @@ export default function AquariumStockr() {
     const t = setTimeout(() => setFadeIn(true), 50);
     return () => clearTimeout(t);
   }, [step]);
+
+  // ── Stocking helpers ──────────────────────────────────────────────────
+  const tankCapacity = tankSize; // 1 bioload unit per gallon
+  const getCount = useCallback((id) => stockList.find(x => x.id === id)?.count ?? 0, [stockList]);
+  const addToStock = useCallback((sp) => {
+    setStockList(prev => {
+      const existing = prev.find(x => x.id === sp.id);
+      if (existing) return prev.map(x => x.id === sp.id ? { ...x, count: x.count + 1 } : x);
+      return [...prev, { id: sp.id, count: 1 }];
+    });
+  }, []);
+  const removeOneFromStock = useCallback((id) => {
+    setStockList(prev => {
+      const existing = prev.find(x => x.id === id);
+      if (!existing) return prev;
+      if (existing.count <= 1) return prev.filter(x => x.id !== id);
+      return prev.map(x => x.id === id ? { ...x, count: x.count - 1 } : x);
+    });
+  }, []);
+  const removeAllFromStock = useCallback((id) => {
+    setStockList(prev => prev.filter(x => x.id !== id));
+  }, []);
+  const totalBioload = stockList.reduce((sum, item) => {
+    const sp = SPECIES_DB.find(s => s.id === item.id);
+    return sum + (sp ? (sp.bioload ?? 1) * item.count : 0);
+  }, 0);
+  const bioloadPct = tankCapacity > 0 ? Math.min((totalBioload / tankCapacity) * 100, 100) : 0;
+  const bioloadOver = totalBioload > tankCapacity;
+  const bioloadOverflow = tankCapacity > 0 ? Math.max(0, (totalBioload / tankCapacity) * 100 - 100) : 0;
+
+  const stockStatus = () => {
+    const pct = tankCapacity > 0 ? (totalBioload / tankCapacity) * 100 : 0;
+    if (pct === 0) return { text: "Add fish to get started", color: "rgba(176,222,255,0.4)" };
+    if (pct < 30)  return { text: "Lightly stocked", color: "#80cbc4" };
+    if (pct < 60)  return { text: "Getting there", color: "#00e5ff" };
+    if (pct < 85)  return { text: "Well balanced", color: "#69f0ae" };
+    if (pct < 100) return { text: "Almost full", color: "#ffd740" };
+    if (pct === 100) return { text: "Perfectly stocked!", color: "#69f0ae" };
+    return { text: `Overstocked by ${(totalBioload - tankCapacity).toFixed(1)} units`, color: "#ff5252" };
+  };
+
+  const barColor = () => {
+    const pct = tankCapacity > 0 ? (totalBioload / tankCapacity) * 100 : 0;
+    if (pct > 100) return "#ff5252";
+    if (pct > 85)  return "#ffd740";
+    return "linear-gradient(90deg, #00e5ff, #69f0ae)";
+  };
 
   const compatible = SPECIES_DB.filter((s) => {
     if (s.water !== waterType) return false;
@@ -1133,8 +1182,310 @@ export default function AquariumStockr() {
                 ))
               )}
             </div>
+
+            {/* Ready to Stock button */}
+            {compatible.length > 0 && (
+              <div style={{ marginTop: 40, display: "flex", justifyContent: "center", animation: "fadeUp 0.6s ease 0.5s both" }}>
+                <button
+                  onClick={() => { setStep(3); setStockTypeFilter("all"); }}
+                  className="glow-btn"
+                  style={{
+                    padding: "18px 48px", fontSize: 17, fontWeight: 600,
+                    fontFamily: "inherit",
+                    background: "linear-gradient(135deg, #00b0ff, #00e5ff)",
+                    border: "none", borderRadius: 60, color: "#0a1628",
+                    cursor: "pointer", letterSpacing: 0.5,
+                    boxShadow: "0 0 20px rgba(0,229,255,0.25), 0 4px 20px rgba(0,0,0,0.3)",
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  Ready to Stock →
+                </button>
+              </div>
+            )}
           </div>
         )}
+
+        {/* ===== STOCKING PLANNER ===== */}
+        {step === 3 && (() => {
+          const status = stockStatus();
+          const color = barColor();
+          const stockedSpecies = stockList.map(item => ({ sp: SPECIES_DB.find(s => s.id === item.id), count: item.count })).filter(x => x.sp);
+          const totalFish = stockList.reduce((s, x) => s + x.count, 0);
+          const pickableSpecies = compatible.filter(s =>
+            stockTypeFilter === "all" ? true : s.type === stockTypeFilter
+          );
+
+          return (
+            <div style={{ paddingTop: 40, paddingBottom: 80, opacity: fadeIn ? 1 : 0, transition: "opacity 0.6s ease" }}>
+              {/* Header */}
+              <div style={{ marginBottom: 32, animation: "fadeUp 0.6s ease both" }}>
+                <button onClick={() => setStep(2)} style={{
+                  background: "none", border: "none", color: "rgba(176,222,255,0.5)",
+                  cursor: "pointer", fontSize: 14, fontFamily: "inherit", marginBottom: 12,
+                }}>← Back to Species</button>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+                  <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 24 : 32, fontWeight: 700 }}>
+                    Stock Your Tank
+                  </h2>
+                  <div style={{
+                    display: "flex", gap: 12, background: "rgba(0,0,0,0.2)", padding: "10px 16px",
+                    borderRadius: 12, fontSize: 13, color: "rgba(176,222,255,0.6)",
+                  }}>
+                    <span>{waterType === "freshwater" ? "🌿" : "🌊"} {waterType}</span>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>{tankSize} gal</span>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>{tankCapacity} bioload units</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Bioload Bar ── */}
+              <div style={{
+                background: "rgba(255,255,255,0.03)", borderRadius: 20, padding: isMobile ? "20px 16px" : "24px 28px",
+                border: bioloadOver ? "1px solid rgba(255,82,82,0.3)" : "1px solid rgba(255,255,255,0.06)",
+                marginBottom: 32, animation: "fadeUp 0.6s ease 0.1s both",
+                transition: "border-color 0.4s ease",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+                  <div>
+                    <span style={{ fontSize: 20, fontWeight: 700, color: bioloadOver ? "#ff5252" : "#00e5ff" }}>
+                      {totalBioload.toFixed(1)}
+                    </span>
+                    <span style={{ fontSize: 14, color: "rgba(176,222,255,0.4)", marginLeft: 6 }}>
+                      / {tankCapacity} units used
+                    </span>
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: status.color }}>{status.text}</span>
+                </div>
+
+                {/* Track */}
+                <div style={{ position: "relative", height: 14, background: "rgba(255,255,255,0.06)", borderRadius: 8, overflow: "visible" }}>
+                  {/* Fill */}
+                  <div style={{
+                    position: "absolute", top: 0, left: 0, height: "100%",
+                    width: `${bioloadPct}%`,
+                    borderRadius: 8,
+                    background: color,
+                    transition: "width 0.5s cubic-bezier(0.4,0,0.2,1), background 0.4s ease",
+                    boxShadow: bioloadOver ? "0 0 12px rgba(255,82,82,0.4)" : "0 0 10px rgba(0,229,255,0.2)",
+                  }} />
+                  {/* Overflow spike */}
+                  {bioloadOver && (
+                    <div style={{
+                      position: "absolute", top: "50%", right: 0, transform: "translateY(-50%)",
+                      width: 14, height: 14, borderRadius: "50%",
+                      background: "#ff5252", border: "2px solid rgba(10,14,26,0.8)",
+                      boxShadow: "0 0 8px rgba(255,82,82,0.8)",
+                      animation: "pulse 1s ease-in-out infinite",
+                    }} />
+                  )}
+                </div>
+
+                {/* Scale labels */}
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "rgba(176,222,255,0.3)" }}>
+                  <span>0</span>
+                  <span style={{ color: "rgba(255,215,64,0.5)" }}>85%</span>
+                  <span style={{ color: bioloadOver ? "rgba(255,82,82,0.6)" : "rgba(176,222,255,0.3)" }}>{tankCapacity} units</span>
+                </div>
+
+                {/* Summary row */}
+                {stockedSpecies.length > 0 && (
+                  <div style={{ marginTop: 16, display: "flex", gap: 20, flexWrap: "wrap", paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.05)", fontSize: 13, color: "rgba(176,222,255,0.5)" }}>
+                    <span>🐠 {totalFish} animal{totalFish !== 1 ? "s" : ""}</span>
+                    <span>🔬 {stockedSpecies.length} species</span>
+                    <span style={{ color: status.color }}>⚡ {((totalBioload / tankCapacity) * 100).toFixed(0)}% capacity</span>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Current Tank Stock ── */}
+              {stockedSpecies.length > 0 && (
+                <div style={{ marginBottom: 32, animation: "fadeUp 0.6s ease 0.15s both" }}>
+                  <h3 style={{ fontSize: 14, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.4)", fontWeight: 600, marginBottom: 16 }}>
+                    🐠 In Your Tank
+                  </h3>
+                  <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden" }}>
+                    {stockedSpecies.map(({ sp, count }, i) => {
+                      const itemBioload = (sp.bioload ?? 1) * count;
+                      const itemPct = tankCapacity > 0 ? (itemBioload / tankCapacity) * 100 : 0;
+                      return (
+                        <div key={sp.id} style={{
+                          display: "flex", alignItems: "center", gap: 14,
+                          padding: "14px 20px",
+                          borderBottom: i < stockedSpecies.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                        }}>
+                          <SpeciesAvatar species={sp} size={44} borderRadius={10} />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{sp.name}</div>
+                            <div style={{ fontSize: 11, color: "rgba(176,222,255,0.35)" }}>
+                              {sp.bioload ?? 1} unit{(sp.bioload ?? 1) !== 1 ? "s" : ""}/fish · {itemBioload.toFixed(1)} total · {itemPct.toFixed(0)}% of tank
+                            </div>
+                          </div>
+                          {/* Count controls */}
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <button
+                              onClick={() => removeOneFromStock(sp.id)}
+                              style={{
+                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,82,82,0.3)",
+                                background: "rgba(255,82,82,0.08)", color: "#ff5252",
+                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.15s",
+                              }}
+                            >−</button>
+                            <span style={{ fontSize: 16, fontWeight: 700, color: "#e0f0ff", minWidth: 28, textAlign: "center" }}>{count}</span>
+                            <button
+                              onClick={() => addToStock(sp)}
+                              style={{
+                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(0,229,255,0.3)",
+                                background: "rgba(0,229,255,0.08)", color: "#00e5ff",
+                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.15s",
+                              }}
+                            >+</button>
+                            <button
+                              onClick={() => removeAllFromStock(sp.id)}
+                              style={{
+                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)",
+                                background: "rgba(255,255,255,0.03)", color: "rgba(176,222,255,0.3)",
+                                cursor: "pointer", fontSize: 14, fontFamily: "inherit",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.15s", marginLeft: 4,
+                              }}
+                              title="Remove all"
+                            >✕</button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Add Species ── */}
+              <div style={{ animation: "fadeUp 0.6s ease 0.2s both" }}>
+                <h3 style={{ fontSize: 14, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.4)", fontWeight: 600, marginBottom: 16 }}>
+                  + Add Species
+                </h3>
+
+                {/* Type filter */}
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
+                  {["all", "fish", "invertebrate", "coral", "amphibian"].map((t) => {
+                    if (t !== "all" && waterType === "freshwater" && t === "coral") return null;
+                    return (
+                      <button
+                        key={t}
+                        onClick={() => setStockTypeFilter(t)}
+                        className="tag-btn"
+                        style={{
+                          padding: "6px 14px", borderRadius: 20, fontSize: 12, fontFamily: "inherit",
+                          background: stockTypeFilter === t ? "rgba(0,229,255,0.15)" : "transparent",
+                          border: stockTypeFilter === t ? "1px solid rgba(0,229,255,0.4)" : "1px solid rgba(255,255,255,0.1)",
+                          color: stockTypeFilter === t ? "#00e5ff" : "rgba(176,222,255,0.5)",
+                          cursor: "pointer", transition: "all 0.2s ease", textTransform: "capitalize",
+                        }}
+                      >
+                        {t === "all" ? "All" : `${TYPE_ICONS[t] || ""} ${TYPE_LABELS[t] || t}`}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Species pick list */}
+                <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden" }}>
+                  {pickableSpecies.map((sp, i) => {
+                    const count = getCount(sp.id);
+                    const addedBioload = (sp.bioload ?? 1) * count;
+                    const wouldOverstock = (totalBioload + (sp.bioload ?? 1)) > tankCapacity;
+                    return (
+                      <div key={sp.id} style={{
+                        display: "flex", alignItems: "center", gap: 14,
+                        padding: "14px 20px",
+                        borderBottom: i < pickableSpecies.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                        background: count > 0 ? "rgba(0,229,255,0.03)" : "transparent",
+                        transition: "background 0.2s ease",
+                      }}>
+                        <SpeciesAvatar species={sp} size={44} borderRadius={10} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{sp.name}</div>
+                          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                            <span style={{ fontSize: 11, color: "rgba(176,222,255,0.35)" }}>
+                              {sp.bioload ?? 1} unit{(sp.bioload ?? 1) !== 1 ? "s" : ""}/fish
+                            </span>
+                            {sp.school > 1 && (
+                              <span style={{ fontSize: 10, color: "#ffcc80", opacity: 0.7 }}>
+                                min {sp.school}
+                              </span>
+                            )}
+                            <span style={{
+                              fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20,
+                              background: sp.difficulty === "beginner" ? "rgba(105,240,174,0.12)" : sp.difficulty === "intermediate" ? "rgba(255,215,64,0.12)" : "rgba(255,82,82,0.12)",
+                              color: sp.difficulty === "beginner" ? "#69f0ae" : sp.difficulty === "intermediate" ? "#ffd740" : "#ff5252",
+                            }}>{sp.difficulty}</span>
+                            {count > 0 && (
+                              <span style={{ fontSize: 11, color: "#00e5ff", fontWeight: 600 }}>
+                                ×{count} in tank ({addedBioload.toFixed(1)} units)
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Add/remove controls */}
+                        {count === 0 ? (
+                          <button
+                            onClick={() => addToStock(sp)}
+                            className="glow-btn"
+                            style={{
+                              padding: "8px 18px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+                              fontFamily: "inherit", cursor: "pointer", transition: "all 0.2s ease",
+                              background: wouldOverstock
+                                ? "rgba(255,82,82,0.12)"
+                                : "rgba(0,229,255,0.1)",
+                              border: wouldOverstock
+                                ? "1px solid rgba(255,82,82,0.4)"
+                                : "1px solid rgba(0,229,255,0.3)",
+                              color: wouldOverstock ? "#ff5252" : "#00e5ff",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {wouldOverstock ? "⚠ Add" : "+ Add"}
+                          </button>
+                        ) : (
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <button
+                              onClick={() => removeOneFromStock(sp.id)}
+                              style={{
+                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,82,82,0.3)",
+                                background: "rgba(255,82,82,0.08)", color: "#ff5252",
+                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                              }}
+                            >−</button>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: "#00e5ff", minWidth: 24, textAlign: "center" }}>{count}</span>
+                            <button
+                              onClick={() => addToStock(sp)}
+                              style={{
+                                width: 30, height: 30, borderRadius: 8,
+                                border: wouldOverstock ? "1px solid rgba(255,82,82,0.4)" : "1px solid rgba(0,229,255,0.3)",
+                                background: wouldOverstock ? "rgba(255,82,82,0.08)" : "rgba(0,229,255,0.08)",
+                                color: wouldOverstock ? "#ff5252" : "#00e5ff",
+                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                              }}
+                            >+</button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
