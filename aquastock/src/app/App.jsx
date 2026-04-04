@@ -1215,6 +1215,7 @@ export default function AquariumStockr() {
                       const capUnits = tankSize > 0 ? (BIOLOAD_PCT_DISPLAY_CAP / 100) * tankSize : Number.MAX_SAFE_INTEGER;
                       const maxByCap = unit > 0 ? Math.floor((capUnits - othersBioload) / unit) : count;
                       const sliderMax = Math.min(500, Math.max(count, maxByCap));
+                      const atSpeciesCap = count >= maxByCap;
                       return (
                         <div key={sp.id} style={{
                           display: "flex", alignItems: "flex-start", gap: 14,
@@ -1226,7 +1227,32 @@ export default function AquariumStockr() {
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
                               <div style={{ fontSize: 14, fontWeight: 600 }}>{sp.name}</div>
                               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <span style={{ fontSize: 15, fontWeight: 700, color: "#00e5ff", minWidth: 28, textAlign: "right" }}>{count}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => setStockCount(sp.id, count - 1)}
+                                  style={{
+                                    width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,82,82,0.3)",
+                                    background: "rgba(255,82,82,0.08)", color: "#ff5252",
+                                    cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    transition: "all 0.15s",
+                                  }}
+                                  title="Remove one"
+                                >−</button>
+                                <span style={{ fontSize: 15, fontWeight: 700, color: "#00e5ff", minWidth: 28, textAlign: "center" }}>{count}</span>
+                                <button
+                                  type="button"
+                                  disabled={atSpeciesCap}
+                                  onClick={() => setStockCount(sp.id, count + 1)}
+                                  title={atSpeciesCap ? `${BIOLOAD_PCT_DISPLAY_CAP}% bioload cap` : "Add one"}
+                                  style={{
+                                    width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(0,229,255,0.3)",
+                                    background: "rgba(0,229,255,0.08)", color: "#00e5ff",
+                                    cursor: atSpeciesCap ? "not-allowed" : "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    transition: "all 0.15s", opacity: atSpeciesCap ? 0.35 : 1,
+                                  }}
+                                >+</button>
                                 <button
                                   type="button"
                                   onClick={() => removeAllFromStock(sp.id)}
@@ -1235,9 +1261,9 @@ export default function AquariumStockr() {
                                     background: "rgba(255,255,255,0.03)", color: "rgba(176,222,255,0.3)",
                                     cursor: "pointer", fontSize: 14, fontFamily: "inherit",
                                     display: "flex", alignItems: "center", justifyContent: "center",
-                                    transition: "all 0.15s",
+                                    transition: "all 0.15s", marginLeft: 4,
                                   }}
-                                  title="Remove from tank"
+                                  title="Remove all from tank"
                                 >✕</button>
                               </div>
                             </div>
