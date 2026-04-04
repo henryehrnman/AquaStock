@@ -7,7 +7,8 @@ import { SpeciesAvatar } from "./components/species/SpeciesAvatar.jsx";
 import { Bubble, ClownfishLogo, SwimmingFish } from "./components/ambient/AmbientAquariumDecor.jsx";
 
 export default function AquariumStockr() {
-  const [step, setStep] = useState(0); // 0=landing, 1=setup, 2=results
+  // ── State: wizard & transitions (hook order fixed) ─────────────────────
+  const [step, setStep] = useState(0); // 0=landing, 1=setup, 2=results, 3=stocking
   const [tankSize, setTankSize] = useState(20);
   const [waterType, setWaterType] = useState("freshwater");
   const [temp, setTemp] = useState(76);
@@ -32,6 +33,8 @@ export default function AquariumStockr() {
   const [catalogStatus, setCatalogStatus] = useState("loading");
   const [catalogErrorDetail, setCatalogErrorDetail] = useState("");
   const [catalogReloadTick, setCatalogReloadTick] = useState(0);
+
+  // ── Refs: scroll targets & ambient parallax ────────────────────────────
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
   const fishRefs = useRef([]);
@@ -62,6 +65,7 @@ export default function AquariumStockr() {
     0.92, 0.55, 1.05, 0.78, 0.63, 0.97, 0.85,
   ]);
 
+  // ── Effects ─────────────────────────────────────────────────────────────
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener("resize", handler);
@@ -100,7 +104,7 @@ export default function AquariumStockr() {
     return () => { cancelled = true; };
   }, [catalogReloadTick]);
 
-  // Scroll: move bubbles upward proportional to depth — rAF throttled to avoid mobile jank
+  // Parallax: bubbles & fish vs scroll (rAF-throttled for mobile)
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
@@ -126,7 +130,6 @@ export default function AquariumStockr() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-
   useEffect(() => {
     window.scrollTo(0, 0);
     setFadeIn(false);
@@ -134,8 +137,7 @@ export default function AquariumStockr() {
     return () => clearTimeout(t);
   }, [step]);
 
-  // ── Stocking helpers ──────────────────────────────────────────────────
-  const tankCapacity = tankSize; // 1 bioload unit per gallon
+  // ── Stock list: mutations ──────────────────────────────────────────────
   const getCount = useCallback((id) => stockList.find(x => x.id === id)?.count ?? 0, [stockList]);
   const addToStock = useCallback((sp) => {
     setStockList(prev => {
@@ -155,6 +157,9 @@ export default function AquariumStockr() {
   const removeAllFromStock = useCallback((id) => {
     setStockList(prev => prev.filter(x => x.id !== id));
   }, []);
+
+  // ── Bioload & capacity (1 unit per gallon) ─────────────────────────────
+  const tankCapacity = tankSize;
   const totalBioload = stockList.reduce((sum, item) => {
     const sp = speciesDb.find(s => s.id === item.id);
     return sum + (sp ? (sp.bioload ?? 1) * item.count : 0);
@@ -181,6 +186,7 @@ export default function AquariumStockr() {
     return "linear-gradient(90deg, #00e5ff, #69f0ae)";
   };
 
+  // ── Matching: filter species & setups from tank + optional chemistry ───
   const compatible = speciesDb.filter((s) => {
     if (s.water !== waterType) return false;
     if (s.minTank > tankSize) return false;
@@ -199,9 +205,9 @@ export default function AquariumStockr() {
   );
 
   const matchingSetups = curatedSetups.filter((s) => s.water === waterType && s.minTank <= tankSize);
-
   const catalogReady = catalogStatus === "ready";
 
+  // ── Render: layout shell ────────────────────────────────────────────────
   return (
     <div style={{
       minHeight: "100vh",
@@ -210,6 +216,7 @@ export default function AquariumStockr() {
       position: "relative",
       overflow: "hidden",
     }}>
+      {/* Global CSS (fonts, keyframes, utilities) */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
         
@@ -329,6 +336,7 @@ export default function AquariumStockr() {
         }
       `}</style>
 
+      {/* Fixed layers: ambient fish + bubbles + caustics (below main content z-index) */}
       {/* Swimming fish — fixed to viewport, positions extend below fold via parallax */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
         {fishPool.current.map((f, i) => (
@@ -383,8 +391,9 @@ export default function AquariumStockr() {
         background: "radial-gradient(ellipse at 30% 20%, rgba(0,229,255,0.03) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(0,176,255,0.02) 0%, transparent 50%)",
       }} />
 
+      {/* Main column: wizard steps */}
       <div style={{ position: "relative", zIndex: 1, maxWidth: 960, margin: "0 auto", padding: isMobile ? "0 16px" : "0 24px" }}>
-        
+
         {/* ===== LANDING ===== */}
         {step === 0 && (
           <div style={{
