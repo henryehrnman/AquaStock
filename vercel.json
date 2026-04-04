@@ -1,0 +1,6 @@
+{
+  "installCommand": "cd aquastock && npm install",
+  "buildCommand": "cd aquastock && npm run build",
+  "outputDirectory": "aquastock/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+}

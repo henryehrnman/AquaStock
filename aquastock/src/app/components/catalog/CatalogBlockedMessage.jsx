@@ -3,7 +3,8 @@ export function CatalogBlockedMessage({ status, detail, onRetry }) {
     loading: { title: "Loading catalog…", body: "Fetching species from your Supabase project." },
     missing_env: {
       title: "Supabase not configured",
-      body: "Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to aquastock/.env, then restart the dev server.",
+      body:
+        "The app needs VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (from Supabase → Project Settings → API). Put them in aquastock/.env, copy from .env.example, use your real project URL—not a placeholder—and restart npm run dev. On Vercel, add the same variables under Environment Variables and redeploy.",
     },
     empty: {
       title: "No species in the database",
@@ -19,7 +20,7 @@ export function CatalogBlockedMessage({ status, detail, onRetry }) {
     <div style={{ textAlign: "center", padding: "56px 24px 80px", maxWidth: 460, margin: "0 auto" }}>
       <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, marginBottom: 12, color: "#e0f0ff" }}>{title}</h3>
       <p style={{ color: "rgba(176,222,255,0.55)", lineHeight: 1.65, marginBottom: 24 }}>{body}</p>
-      {(status === "error" || status === "empty") && (
+      {(status === "error" || status === "empty" || status === "missing_env") && (
         <button
           type="button"
           onClick={onRetry}

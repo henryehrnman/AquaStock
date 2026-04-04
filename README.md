@@ -14,10 +14,24 @@ The app loads **only** from your Supabase tables `species` and `curated_setups`.
 4. Copy **Project URL** and **anon public** key into `aquastock/.env` (see `.env.example`).
 5. Run the app with `npm run dev`. If tables are empty or env is wrong, the UI explains what to fix.
 
-6. **Vercel:** Project → **Settings → Environment Variables** → add for Production (and Preview if you want):
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`  
-   Redeploy after saving.
+6. **Vercel**
+   - This repo keeps the Vite app in **`aquastock/`**. Either:
+     - **Option A (recommended):** leave **Root Directory** empty (repo root). The root **`vercel.json`** installs and builds inside `aquastock/` and publishes **`aquastock/dist`**.
+     - **Option B:** set **Root Directory** to `aquastock` (then Framework Preset **Vite**, Output **dist**). You can remove or ignore the root `vercel.json` in that case.
+   - **Environment Variables** (same names as local `.env`):
+     - `VITE_SUPABASE_URL` = Supabase **Project URL**
+     - `VITE_SUPABASE_ANON_KEY` = **anon public** key (not the service role)
+   - Enable them for **Production** and **Preview** if you use preview URLs.
+   - **Redeploy** after changing env vars (Deployments → … → Redeploy).
+
+### If the deployed site still fails
+
+| Symptom | What to fix |
+|--------|-------------|
+| “Supabase not configured” | Env vars missing or only set for Production while you’re on a **Preview** URL — add for Preview too, redeploy. |
+| Blank / wrong build | Root Directory: use **Option A or B** above consistently; check **Vercel → Deployments → Build Logs** for errors. |
+| “Could not load catalog” / console errors | Run **`aquastock/supabase/migrations/20250403120000_init.sql`** in Supabase SQL Editor (tables + RLS). Confirm **Table Editor → species** exists. |
+| “No species in the database” | Normal until you **insert rows** into `species` (and optionally `curated_setups`). |
 
 ### Example: one species row (SQL)
 

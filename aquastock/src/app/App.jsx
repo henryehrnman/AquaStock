@@ -696,8 +696,10 @@ export default function AquariumStockr() {
               Find Compatible Species →
             </button>
             {catalogStatus === "missing_env" && (
-              <p style={{ textAlign: "center", fontSize: 13, color: "rgba(255,215,64,0.55)", maxWidth: 400, marginTop: 12 }}>
-                Configure Supabase in .env to load the species catalog.
+              <p style={{ textAlign: "center", fontSize: 13, color: "rgba(255,215,64,0.55)", maxWidth: 440, marginTop: 12, lineHeight: 1.5 }}>
+                Set <code style={{ color: "rgba(200,230,255,0.85)" }}>VITE_SUPABASE_URL</code> and{" "}
+                <code style={{ color: "rgba(200,230,255,0.85)" }}>VITE_SUPABASE_ANON_KEY</code> in{" "}
+                <code style={{ color: "rgba(200,230,255,0.85)" }}>aquastock/.env</code>, then restart the dev server (or add them on Vercel and redeploy).
               </p>
             )}
           </div>
