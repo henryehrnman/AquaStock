@@ -1,261 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { SPECIES_DB, CURATED_SETUPS } from "./data";
-
-const TYPE_ICONS = { fish: "🐟", invertebrate: "🦐", coral: "🪸", amphibian: "🐸" };
-
-const TYPE_LABELS = { fish: "Fish", invertebrate: "Invertebrates", coral: "Corals", amphibian: "Amphibians" };
-
-// ─── Image cache so we don't re-fetch the same species ───
-const imageCache = {};
-
-// ─── Wikipedia search terms for better image results ───
-const SEARCH_OVERRIDES = {
-  "Betta Splendens": "Betta fish",
-  "Cherry Shrimp": "Neocaridina davidi red",
-  "Blue Dream Shrimp": "Neocaridina davidi blue",
-  "Orange Sakura Shrimp": "Neocaridina davidi orange",
-  "Yellow Shrimp": "Neocaridina davidi yellow",
-  "Crystal Red Shrimp": "Caridina cantonensis crystal red",
-  "Crystal Black Shrimp": "Caridina cantonensis crystal black",
-  "Ghost Shrimp": "Palaemonetes paludosus",
-  "Amano Shrimp": "Caridina multidentata",
-  "Cleaner Shrimp (Skunk)": "Lysmata amboinensis",
-  "Peppermint Shrimp": "Lysmata wurdemanni",
-  "Sexy Shrimp": "Thor amboinensis",
-  "Yellow Lab (Labidochromis caeruleus)": "Labidochromis caeruleus",
-  "Galaxy Rasbora (Celestial Pearl Danio)": "Celestichthys margaritatus",
-  "Espei Rasbora (Lambchop)": "Trigonostigma espei",
-  "Peacock Cichlid (Aulonocara)": "Aulonocara cichlid",
-  "Shell Dweller (Neolamprologus multifasciatus)": "Neolamprologus multifasciatus",
-  "Blue Leg Hermit Crab": "Clibanarius tricolor",
-  "Scarlet Reef Hermit": "Paguristes cadenati",
-  "Mexican Dwarf Crayfish (CPO)": "Cambarellus patzcuarensis orange",
-  "Blue Crayfish (Procambarus alleni)": "Procambarus alleni",
-  "Fire Belly Newt": "Cynops orientalis",
-  "Dojo/Weather Loach": "Misgurnus anguillicaudatus",
-  "Vampire Pleco (L029)": "Leporacanthicus galaxias",
-  "Axolotl (Leucistic)": "Axolotl leucistic",
-  "Axolotl (GFP/Green Fluorescent)": "Axolotl GFP green fluorescent",
-  "Mexican Axolotl (Wild Type)": "Ambystoma mexicanum",
-  "Bubble Tip Anemone": "Entacmaea quadricolor",
-  "Rock Flower Anemone": "Phymanthus crucifer",
-  "Mushroom Coral (Discosoma)": "Discosoma coral",
-  "Montipora (Plating)": "Montipora coral",
-  "Montipora (Digitata)": "Montipora digitata",
-  "Hammer Coral (Euphyllia)": "Euphyllia ancora",
-  "Torch Coral (Euphyllia)": "Euphyllia glabrescens",
-  "Frogspawn Coral (Euphyllia)": "Euphyllia divisa",
-  "Rhodactis Mushroom": "Rhodactis coral",
-  "Carpenter's Fairy Wrasse": "Cirrhilabrus carpenterae",
-};
-
-function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {}, onLoad }) {
-  // Pre-populate cache from static photo field
-  if (photo && !imageCache[name]) imageCache[name] = photo;
-
-  const [imgUrl, setImgUrl] = useState(imageCache[name] || null);
-  const [failed, setFailed] = useState(imageCache[name] === "NONE");
-
-  useEffect(() => {
-    if (imageCache[name] === "NONE") { setFailed(true); return; }
-    if (imageCache[name]) { setImgUrl(imageCache[name]); return; }
-
-    let cancelled = false;
-    const searchTerm = SEARCH_OVERRIDES[name] || name;
-
-    // Use Wikipedia API to get the main image for the species
-    const fetchImage = async () => {
-      try {
-        // Try Wikipedia page image first
-        const res = await fetch(
-          `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`
-        );
-        if (!cancelled && res.ok) {
-          const data = await res.json();
-          if (data.thumbnail?.source) {
-            // Get a higher-res version by tweaking the thumbnail URL
-            const hiRes = data.thumbnail.source.replace(/\/\d+px-/, "/300px-");
-            imageCache[name] = hiRes;
-            setImgUrl(hiRes);
-            return;
-          }
-        }
-        
-        // Fallback: Wikipedia search API
-        const searchRes = await fetch(
-          `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(searchTerm)}&prop=pageimages&format=json&pithumbsize=300&origin=*`
-        );
-        if (!cancelled && searchRes.ok) {
-          const searchData = await searchRes.json();
-          const pages = searchData.query?.pages;
-          if (pages) {
-            const page = Object.values(pages)[0];
-            if (page?.thumbnail?.source) {
-              imageCache[name] = page.thumbnail.source;
-              setImgUrl(page.thumbnail.source);
-              return;
-            }
-          }
-        }
-
-        // Second fallback: search by query
-        const qRes = await fetch(
-          `https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(searchTerm + " aquarium")}&gsrlimit=3&prop=pageimages&format=json&pithumbsize=300&origin=*`
-        );
-        if (!cancelled && qRes.ok) {
-          const qData = await qRes.json();
-          const pages = qData.query?.pages;
-          if (pages) {
-            for (const page of Object.values(pages)) {
-              if (page?.thumbnail?.source) {
-                imageCache[name] = page.thumbnail.source;
-                setImgUrl(page.thumbnail.source);
-                return;
-              }
-            }
-          }
-        }
-
-        if (!cancelled) {
-          imageCache[name] = "NONE";
-          setFailed(true);
-        }
-      } catch {
-        if (!cancelled) {
-          imageCache[name] = "NONE";
-          setFailed(true);
-        }
-      }
-    };
-
-    fetchImage();
-    return () => { cancelled = true; };
-  }, [name]);
-
-  if (failed || !imgUrl) {
-    return null; // Let the parent show fallback emoji
-  }
-
-  return (
-    <img
-      src={imgUrl}
-      alt={name}
-      loading="lazy"
-      style={{
-        height: size,
-        width: "auto",
-        maxWidth: size * 2,
-        borderRadius,
-        display: "block",
-        flexShrink: 0,
-        ...style,
-      }}
-      onLoad={onLoad}
-      onError={() => {
-        imageCache[name] = "NONE";
-        setFailed(true);
-      }}
-    />
-  );
-}
-
-// Wrapper that shows image or falls back to emoji icon
-function SpeciesAvatar({ species, size = 44, borderRadius = 12 }) {
-  const cached = imageCache[species.name];
-  const [hasImage, setHasImage] = useState(!!cached && cached !== "NONE");
-
-  return (
-    <div style={{
-      height: size, width: "auto", minWidth: size, maxWidth: size * 2, borderRadius,
-      background: `${species.color || "#00e5ff"}18`,
-      display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: size > 60 ? 36 : 22, flexShrink: 0,
-      border: `1px solid ${species.color || "#00e5ff"}30`,
-      overflow: "hidden",
-      position: "relative",
-    }}>
-      <SpeciesImage name={species.name} photo={species.photo} size={size} borderRadius={0} onLoad={() => setHasImage(true)} />
-      {!hasImage && <span style={{ position: "absolute" }}>{species.img}</span>}
-    </div>
-  );
-}
-
-function ClownfishLogo({ size = 56 }) {
-  const O = '#FF6B35'; // orange
-  const B = '#0d1117'; // black
-  const W = '#FFFFFF'; // white
-  const _ = null;
-
-  // 16 × 11 pixel grid — right-facing clownfish with dorsal fin + forked tail
-  const grid = [
-    //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-    [ _,  _,  _,  _,  _,  B,  B,  _,  _,  _,  _,  _,  _,  _,  _,  _], // 0 dorsal fin
-    [ _,  _,  _,  _,  B,  O,  O,  B,  _,  _,  _,  _,  _,  _,  _,  _], // 1 dorsal fin
-    [ _,  _,  _,  B,  B,  B,  B,  B,  B,  B,  _,  _,  _,  _,  _,  _], // 2 body top
-    [ _,  _,  B,  O,  O,  B,  W,  B,  O,  O,  B,  _,  _,  B,  _,  _], // 3 tail upper tip
-    [ _,  B,  O,  O,  B,  W,  W,  B,  O,  O,  O,  B,  B,  O,  B,  _], // 4 tail upper fork
-    [ B,  O,  O,  O,  B,  W,  W,  B,  O,  O,  O,  O,  O,  O,  B,  _], // 5
-    [ B,  O,  B,  O,  B,  W,  W,  B,  O,  O,  O,  O,  O,  O,  B,  _], // 6 eye at col 2
-    [ B,  O,  O,  O,  B,  W,  W,  B,  O,  O,  O,  O,  O,  O,  B,  _], // 7
-    [ _,  B,  O,  O,  B,  W,  W,  B,  O,  O,  O,  B,  B,  O,  B,  _], // 8 tail lower fork
-    [ _,  _,  B,  O,  O,  B,  W,  B,  O,  O,  B,  _,  _,  B,  _,  _], // 9 tail lower tip
-    [ _,  _,  _,  B,  B,  B,  B,  B,  B,  B,  _,  _,  _,  _,  _,  _], // 10 body bottom
-  ];
-
-  const cols = 16, rows = 11;
-  const px = size / cols;
-
-  return (
-    <svg width={size} height={Math.round(rows * px)} viewBox={`0 0 ${cols} ${rows}`} shapeRendering="crispEdges">
-      {grid.map((row, y) =>
-        row.map((color, x) =>
-          color ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={color} /> : null
-        )
-      )}
-    </svg>
-  );
-}
-
-function SwimmingFish({ size, top, duration, delay, direction = "right", opacity = 0.12, parallaxRef }) {
-  const anim = direction === "right" ? "swim-right" : "swim-left";
-  const appearDuration = useRef(30 + Math.random() * 40);
-  const appearDelay    = useRef(-(Math.random() * 30));
-  return (
-    // ref on outermost so scroll handler can update both transform (parallax) and top (recycle)
-    <div ref={parallaxRef} className="swim-fish" style={{
-      position: "absolute", top, left: 0, width: "100%", pointerEvents: "none",
-      willChange: "transform",
-      animation: `fish-appear ${appearDuration.current}s ease-in-out infinite`,
-      animationDelay: `${appearDelay.current}s`,
-    }}>
-      <div style={{ display: "inline-block", animation: `${anim} ${duration}s linear infinite`, animationDelay: `${delay}s`, opacity, willChange: "transform" }}>
-        <div style={{ transform: direction === "right" ? "scaleX(-1)" : undefined }}>
-          <ClownfishLogo size={size} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Bubble({ style, parallaxRef }) {
-  const duration = useRef(8 + Math.random() * 12);
-  const delay = useRef(Math.random() * 5);
-  return (
-    // Outer div: handles parallax translation via ref (no re-renders)
-    <div ref={parallaxRef} style={{ position: "absolute", willChange: "transform", ...style }}>
-      {/* Inner div: handles CSS float animation independently */}
-      <div className="bubble-inner" style={{
-        width: "100%", height: "100%", borderRadius: "50%",
-        background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0.02))",
-        border: "1px solid rgba(255,255,255,0.06)",
-        animation: `float ${duration.current}s ease-in-out infinite`,
-        animationDelay: `${delay.current}s`,
-        willChange: "transform",
-        transform: "translateZ(0)",
-      }} />
-    </div>
-  );
-}
+import { getSupabase } from "../lib/supabase/browserClient.js";
+import { fetchCatalog } from "../lib/supabase/speciesCatalogFromSupabase.js";
+import { SPECIES_TYPE_ICONS, SPECIES_TYPE_LABELS } from "../config/speciesUi.js";
+import { CatalogBlockedMessage } from "./components/catalog/CatalogBlockedMessage.jsx";
+import { SpeciesAvatar } from "./components/species/SpeciesAvatar.jsx";
+import { Bubble, ClownfishLogo, SwimmingFish } from "./components/ambient/AmbientAquariumDecor.jsx";
 
 export default function AquariumStockr() {
   const [step, setStep] = useState(0); // 0=landing, 1=setup, 2=results
@@ -277,6 +26,12 @@ export default function AquariumStockr() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
   const [stockList, setStockList] = useState([]); // [{id, count}]
   const [stockTypeFilter, setStockTypeFilter] = useState("all");
+  const [speciesDb, setSpeciesDb] = useState([]);
+  const [curatedSetups, setCuratedSetups] = useState([]);
+  /** loading | ready | missing_env | error | empty */
+  const [catalogStatus, setCatalogStatus] = useState("loading");
+  const [catalogErrorDetail, setCatalogErrorDetail] = useState("");
+  const [catalogReloadTick, setCatalogReloadTick] = useState(0);
   const resultsRef = useRef(null);
   const bubbleRefs = useRef([]);
   const fishRefs = useRef([]);
@@ -312,6 +67,38 @@ export default function AquariumStockr() {
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
+
+  useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      setCatalogStatus("missing_env");
+      setSpeciesDb([]);
+      setCuratedSetups([]);
+      return;
+    }
+    let cancelled = false;
+    setCatalogStatus("loading");
+    setCatalogErrorDetail("");
+    (async () => {
+      try {
+        const { species, curatedSetups: setups } = await fetchCatalog(supabase);
+        if (cancelled) return;
+        setSpeciesDb(species);
+        setCuratedSetups(setups);
+        if (species.length === 0) setCatalogStatus("empty");
+        else setCatalogStatus("ready");
+      } catch (e) {
+        console.error("Supabase catalog load failed:", e);
+        if (!cancelled) {
+          setCatalogStatus("error");
+          setCatalogErrorDetail(e?.message || String(e));
+          setSpeciesDb([]);
+          setCuratedSetups([]);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [catalogReloadTick]);
 
   // Scroll: move bubbles upward proportional to depth — rAF throttled to avoid mobile jank
   useEffect(() => {
@@ -369,7 +156,7 @@ export default function AquariumStockr() {
     setStockList(prev => prev.filter(x => x.id !== id));
   }, []);
   const totalBioload = stockList.reduce((sum, item) => {
-    const sp = SPECIES_DB.find(s => s.id === item.id);
+    const sp = speciesDb.find(s => s.id === item.id);
     return sum + (sp ? (sp.bioload ?? 1) * item.count : 0);
   }, 0);
   const bioloadPct = tankCapacity > 0 ? Math.min((totalBioload / tankCapacity) * 100, 100) : 0;
@@ -394,7 +181,7 @@ export default function AquariumStockr() {
     return "linear-gradient(90deg, #00e5ff, #69f0ae)";
   };
 
-  const compatible = SPECIES_DB.filter((s) => {
+  const compatible = speciesDb.filter((s) => {
     if (s.water !== waterType) return false;
     if (s.minTank > tankSize) return false;
     if (showParams && (temp < s.tempMin || temp > s.tempMax)) return false;
@@ -406,12 +193,14 @@ export default function AquariumStockr() {
     return true;
   });
 
-  const popularPicks = SPECIES_DB.filter(
+  const popularPicks = speciesDb.filter(
     (s) => s.popular && s.water === waterType && s.minTank <= tankSize &&
     (!showParams || (temp >= s.tempMin && temp <= s.tempMax && ph >= s.phMin && ph <= s.phMax && gh >= s.ghMin && gh <= s.ghMax && kh >= s.khMin && kh <= s.khMax))
   );
 
-  const matchingSetups = CURATED_SETUPS.filter((s) => s.water === waterType && s.minTank <= tankSize);
+  const matchingSetups = curatedSetups.filter((s) => s.water === waterType && s.minTank <= tankSize);
+
+  const catalogReady = catalogStatus === "ready";
 
   return (
     <div style={{
@@ -890,14 +679,15 @@ export default function AquariumStockr() {
 
             <button
               onClick={() => { setStep(2); setTypeFilter("all"); setDiffFilter("all"); setSelectedSpecies(null); }}
+              disabled={catalogStatus === "missing_env"}
               className="glow-btn"
               style={{
                 padding: "18px 48px", fontSize: 17, fontWeight: 600,
                 fontFamily: "inherit",
-                background: "linear-gradient(135deg, #00b0ff, #00e5ff)",
-                border: "none", borderRadius: 60, color: "#0a1628",
-                cursor: "pointer", letterSpacing: 0.5,
-                boxShadow: "0 0 20px rgba(0,229,255,0.25), 0 4px 20px rgba(0,0,0,0.3)",
+                background: catalogStatus === "missing_env" ? "rgba(255,255,255,0.12)" : "linear-gradient(135deg, #00b0ff, #00e5ff)",
+                border: "none", borderRadius: 60, color: catalogStatus === "missing_env" ? "rgba(224,240,255,0.35)" : "#0a1628",
+                cursor: catalogStatus === "missing_env" ? "not-allowed" : "pointer", letterSpacing: 0.5,
+                boxShadow: catalogStatus === "missing_env" ? "none" : "0 0 20px rgba(0,229,255,0.25), 0 4px 20px rgba(0,0,0,0.3)",
                 transition: "all 0.3s ease",
                 animation: "fadeUp 0.6s ease 0.5s both",
                 alignSelf: "center",
@@ -905,6 +695,11 @@ export default function AquariumStockr() {
             >
               Find Compatible Species →
             </button>
+            {catalogStatus === "missing_env" && (
+              <p style={{ textAlign: "center", fontSize: 13, color: "rgba(255,215,64,0.55)", maxWidth: 400, marginTop: 12 }}>
+                Configure Supabase in .env to load the species catalog.
+              </p>
+            )}
           </div>
         )}
 
@@ -944,6 +739,14 @@ export default function AquariumStockr() {
               </div>
             </div>
 
+            {!catalogReady ? (
+              <CatalogBlockedMessage
+                status={catalogStatus}
+                detail={catalogErrorDetail}
+                onRetry={() => setCatalogReloadTick((n) => n + 1)}
+              />
+            ) : (
+            <>
             {/* Curated Setups */}
             {matchingSetups.length > 0 && (
               <div style={{ marginBottom: 40, animation: "fadeUp 0.6s ease 0.1s both" }}>
@@ -962,7 +765,7 @@ export default function AquariumStockr() {
                       <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", marginBottom: 16, lineHeight: 1.5 }}>{setup.desc}</p>
                       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                         {setup.species.map((sid) => {
-                          const sp = SPECIES_DB.find((s) => s.id === sid);
+                          const sp = speciesDb.find((s) => s.id === sid);
                           return sp ? (
                             <span key={sid} style={{
                               fontSize: 12, padding: "3px 4px 3px 3px", borderRadius: 20,
@@ -1035,7 +838,7 @@ export default function AquariumStockr() {
                         cursor: "pointer", transition: "all 0.2s ease", textTransform: "capitalize",
                       }}
                     >
-                      {t === "all" ? "All" : `${TYPE_ICONS[t] || ""} ${TYPE_LABELS[t] || t}`}
+                      {t === "all" ? "All" : `${SPECIES_TYPE_ICONS[t] || ""} ${SPECIES_TYPE_LABELS[t] || t}`}
                     </button>
                   );
                 })}
@@ -1087,7 +890,7 @@ export default function AquariumStockr() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 15, fontWeight: 600 }}>{sp.name}</div>
                         <div style={{ fontSize: 12, color: "rgba(176,222,255,0.4)", marginTop: 2 }}>
-                          {TYPE_LABELS[sp.type]} · Min {sp.minTank}gal · {sp.school > 1 ? `School of ${sp.school}+` : "Solo"}
+                          {SPECIES_TYPE_LABELS[sp.type]} · Min {sp.minTank}gal · {sp.school > 1 ? `School of ${sp.school}+` : "Solo"}
                         </div>
                       </div>
                       <div style={{
@@ -1123,7 +926,7 @@ export default function AquariumStockr() {
                               <div className="detail-tags" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                                 {[
                                   { label: sp.water === "freshwater" ? "Freshwater" : "Saltwater", color: sp.water === "freshwater" ? "#00e5ff" : "#00b0ff" },
-                                  { label: TYPE_LABELS[sp.type], color: "#b39ddb" },
+                                  { label: SPECIES_TYPE_LABELS[sp.type], color: "#b39ddb" },
                                   { label: `Min ${sp.minTank} gal`, color: "#80cbc4" },
                                   { label: sp.school > 1 ? `School of ${sp.school}+` : "Solo", color: "#ffcc80" },
                                 ].map(({ label, color }) => (
@@ -1203,6 +1006,8 @@ export default function AquariumStockr() {
                 </button>
               </div>
             )}
+            </>
+            )}
           </div>
         )}
 
@@ -1210,7 +1015,7 @@ export default function AquariumStockr() {
         {step === 3 && (() => {
           const status = stockStatus();
           const color = barColor();
-          const stockedSpecies = stockList.map(item => ({ sp: SPECIES_DB.find(s => s.id === item.id), count: item.count })).filter(x => x.sp);
+          const stockedSpecies = stockList.map(item => ({ sp: speciesDb.find(s => s.id === item.id), count: item.count })).filter(x => x.sp);
           const totalFish = stockList.reduce((s, x) => s + x.count, 0);
           const pickableSpecies = compatible.filter(s =>
             stockTypeFilter === "all" ? true : s.type === stockTypeFilter
@@ -1241,6 +1046,14 @@ export default function AquariumStockr() {
                 </div>
               </div>
 
+              {!catalogReady ? (
+                <CatalogBlockedMessage
+                  status={catalogStatus}
+                  detail={catalogErrorDetail}
+                  onRetry={() => setCatalogReloadTick((n) => n + 1)}
+                />
+              ) : (
+              <>
               {/* ── Bioload Bar ── */}
               <div style={{
                 background: "rgba(255,255,255,0.03)", borderRadius: 20, padding: isMobile ? "20px 16px" : "24px 28px",
@@ -1388,7 +1201,7 @@ export default function AquariumStockr() {
                           cursor: "pointer", transition: "all 0.2s ease", textTransform: "capitalize",
                         }}
                       >
-                        {t === "all" ? "All" : `${TYPE_ICONS[t] || ""} ${TYPE_LABELS[t] || t}`}
+                        {t === "all" ? "All" : `${SPECIES_TYPE_ICONS[t] || ""} ${SPECIES_TYPE_LABELS[t] || t}`}
                       </button>
                     );
                   })}
@@ -1483,6 +1296,8 @@ export default function AquariumStockr() {
                   })}
                 </div>
               </div>
+            </>
+            )}
             </div>
           );
         })()}
