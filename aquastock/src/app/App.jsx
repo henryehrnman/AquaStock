@@ -154,17 +154,31 @@ export default function AquariumStockr() {
       return [...prev, { id: sp.id, count: 1 }];
     });
   }, [speciesDb, tankSize]);
-  const removeOneFromStock = useCallback((id) => {
-    setStockList(prev => {
-      const existing = prev.find(x => x.id === id);
-      if (!existing) return prev;
-      if (existing.count <= 1) return prev.filter(x => x.id !== id);
-      return prev.map(x => x.id === id ? { ...x, count: x.count - 1 } : x);
-    });
-  }, []);
   const removeAllFromStock = useCallback((id) => {
     setStockList(prev => prev.filter(x => x.id !== id));
   }, []);
+
+  /** Set count for a species (0 removes). Clamped to 1000% bioload cap vs other stock. */
+  const setStockCount = useCallback((speciesId, desired) => {
+    setStockList(prev => {
+      const sp = speciesDb.find(s => s.id === speciesId);
+      if (!sp) return prev;
+      const unit = sp.bioload ?? 1;
+      const othersBioload = prev.reduce((sum, item) => {
+        if (item.id === speciesId) return sum;
+        const s = speciesDb.find(x => x.id === item.id);
+        return sum + (s ? (s.bioload ?? 1) * item.count : 0);
+      }, 0);
+      const capUnits = tankSize > 0 ? (BIOLOAD_PCT_DISPLAY_CAP / 100) * tankSize : Number.MAX_SAFE_INTEGER;
+      const maxByCap = unit > 0 ? Math.floor((capUnits - othersBioload) / unit) : 0;
+      let n = Math.max(0, Math.floor(Number(desired) || 0));
+      n = Math.min(n, maxByCap);
+      if (n === 0) return prev.filter(x => x.id !== speciesId);
+      const existing = prev.find(x => x.id === speciesId);
+      if (existing) return prev.map(x => x.id === speciesId ? { ...x, count: n } : x);
+      return [...prev, { id: speciesId, count: n }];
+    });
+  }, [speciesDb, tankSize]);
 
   // ── Bioload & capacity (1 unit per gallon) ─────────────────────────────
   const tankCapacity = tankSize;
@@ -1194,58 +1208,55 @@ export default function AquariumStockr() {
                   </h3>
                   <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden" }}>
                     {stockedSpecies.map(({ sp, count }, i) => {
-                      const itemBioload = (sp.bioload ?? 1) * count;
+                      const unit = sp.bioload ?? 1;
+                      const itemBioload = unit * count;
                       const itemPct = tankCapacity > 0 ? (itemBioload / tankCapacity) * 100 : 0;
+                      const othersBioload = totalBioload - itemBioload;
+                      const capUnits = tankSize > 0 ? (BIOLOAD_PCT_DISPLAY_CAP / 100) * tankSize : Number.MAX_SAFE_INTEGER;
+                      const maxByCap = unit > 0 ? Math.floor((capUnits - othersBioload) / unit) : count;
+                      const sliderMax = Math.min(500, Math.max(count, maxByCap));
                       return (
                         <div key={sp.id} style={{
-                          display: "flex", alignItems: "center", gap: 14,
+                          display: "flex", alignItems: "flex-start", gap: 14,
                           padding: "14px 20px",
                           borderBottom: i < stockedSpecies.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                         }}>
                           <SpeciesAvatar species={sp} size={44} borderRadius={10} />
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{sp.name}</div>
-                            <div style={{ fontSize: 11, color: "rgba(176,222,255,0.35)" }}>
-                              {sp.bioload ?? 1} unit{(sp.bioload ?? 1) !== 1 ? "s" : ""}/fish · {itemBioload.toFixed(1)} total · {formatCappedBioloadPct(itemPct)} of tank
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                              <div style={{ fontSize: 14, fontWeight: 600 }}>{sp.name}</div>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 15, fontWeight: 700, color: "#00e5ff", minWidth: 28, textAlign: "right" }}>{count}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => removeAllFromStock(sp.id)}
+                                  style={{
+                                    width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)",
+                                    background: "rgba(255,255,255,0.03)", color: "rgba(176,222,255,0.3)",
+                                    cursor: "pointer", fontSize: 14, fontFamily: "inherit",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    transition: "all 0.15s",
+                                  }}
+                                  title="Remove from tank"
+                                >✕</button>
+                              </div>
                             </div>
-                          </div>
-                          {/* Count controls */}
-                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <button
-                              onClick={() => removeOneFromStock(sp.id)}
-                              style={{
-                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,82,82,0.3)",
-                                background: "rgba(255,82,82,0.08)", color: "#ff5252",
-                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                transition: "all 0.15s",
-                              }}
-                            >−</button>
-                            <span style={{ fontSize: 16, fontWeight: 700, color: "#e0f0ff", minWidth: 28, textAlign: "center" }}>{count}</span>
-                            <button
-                              type="button"
-                              disabled={bioloadPctAtCap}
-                              onClick={() => addToStock(sp)}
-                              title={bioloadPctAtCap ? `${BIOLOAD_PCT_DISPLAY_CAP}% bioload cap` : undefined}
-                              style={{
-                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(0,229,255,0.3)",
-                                background: "rgba(0,229,255,0.08)", color: "#00e5ff",
-                                cursor: bioloadPctAtCap ? "not-allowed" : "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                transition: "all 0.15s", opacity: bioloadPctAtCap ? 0.35 : 1,
-                              }}
-                            >+</button>
-                            <button
-                              onClick={() => removeAllFromStock(sp.id)}
-                              style={{
-                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)",
-                                background: "rgba(255,255,255,0.03)", color: "rgba(176,222,255,0.3)",
-                                cursor: "pointer", fontSize: 14, fontFamily: "inherit",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                transition: "all 0.15s", marginLeft: 4,
-                              }}
-                              title="Remove all"
-                            >✕</button>
+                            <div style={{ fontSize: 11, color: "rgba(176,222,255,0.35)", marginTop: 4 }}>
+                              {unit} unit{unit !== 1 ? "s" : ""}/fish · {itemBioload.toFixed(1)} total · {formatCappedBioloadPct(itemPct)} of tank
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10 }}>
+                              <span style={{ fontSize: 10, color: "rgba(176,222,255,0.35)", width: 14 }}>0</span>
+                              <input
+                                type="range"
+                                min={0}
+                                max={sliderMax}
+                                value={Math.min(count, sliderMax)}
+                                onChange={(e) => setStockCount(sp.id, +e.target.value)}
+                                aria-label={`${sp.name} count`}
+                                style={{ flex: 1, minWidth: 0 }}
+                              />
+                              <span style={{ fontSize: 10, color: "rgba(176,222,255,0.35)", minWidth: 22, textAlign: "right" }}>{sliderMax}</span>
+                            </div>
                           </div>
                         </div>
                       );
@@ -1323,7 +1334,7 @@ export default function AquariumStockr() {
                           </div>
                         </div>
 
-                        {/* Add/remove controls */}
+                        {/* Only not-yet-added species: single +. Count changes use slider in In Your Tank. */}
                         {count === 0 ? (
                           <button
                             type="button"
@@ -1351,37 +1362,9 @@ export default function AquariumStockr() {
                             {addBlockedAtCap ? `${BIOLOAD_PCT_DISPLAY_CAP}% cap` : wouldOverstock ? "⚠ Add" : "+ Add"}
                           </button>
                         ) : (
-                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <button
-                              onClick={() => removeOneFromStock(sp.id)}
-                              style={{
-                                width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(255,82,82,0.3)",
-                                background: "rgba(255,82,82,0.08)", color: "#ff5252",
-                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                              }}
-                            >−</button>
-                            <span style={{ fontSize: 15, fontWeight: 700, color: "#00e5ff", minWidth: 24, textAlign: "center" }}>{count}</span>
-                            <button
-                              type="button"
-                              disabled={addBlockedAtCap}
-                              onClick={() => addToStock(sp)}
-                              title={addBlockedAtCap ? `${BIOLOAD_PCT_DISPLAY_CAP}% bioload cap` : undefined}
-                              style={{
-                                width: 30, height: 30, borderRadius: 8,
-                                border: addBlockedAtCap
-                                  ? "1px solid rgba(255,255,255,0.1)"
-                                  : wouldOverstock ? "1px solid rgba(255,82,82,0.4)" : "1px solid rgba(0,229,255,0.3)",
-                                background: addBlockedAtCap
-                                  ? "rgba(255,255,255,0.04)"
-                                  : wouldOverstock ? "rgba(255,82,82,0.08)" : "rgba(0,229,255,0.08)",
-                                color: addBlockedAtCap ? "rgba(176,222,255,0.3)" : wouldOverstock ? "#ff5252" : "#00e5ff",
-                                cursor: addBlockedAtCap ? "not-allowed" : "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                opacity: addBlockedAtCap ? 0.35 : 1,
-                              }}
-                            >+</button>
-                          </div>
+                          <span style={{ fontSize: 11, color: "rgba(176,222,255,0.35)", fontStyle: "italic", whiteSpace: "nowrap" }}>
+                            In tank — use slider above
+                          </span>
                         )}
                       </div>
                     );
