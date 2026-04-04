@@ -6,6 +6,9 @@ import { CatalogBlockedMessage } from "./components/catalog/CatalogBlockedMessag
 import { SpeciesAvatar } from "./components/species/SpeciesAvatar.jsx";
 import { Bubble, ClownfishLogo, SwimmingFish } from "./components/ambient/AmbientAquariumDecor.jsx";
 
+/** Max displayed / enforced stocking as % of tank bioload capacity (no adds at or above this). */
+const BIOLOAD_PCT_DISPLAY_CAP = 1000;
+
 export default function AquariumStockr() {
   // ── State: wizard & transitions (hook order fixed) ─────────────────────
   const [step, setStep] = useState(0); // 0=landing, 1=setup, 2=results, 3=stocking
@@ -141,11 +144,16 @@ export default function AquariumStockr() {
   const getCount = useCallback((id) => stockList.find(x => x.id === id)?.count ?? 0, [stockList]);
   const addToStock = useCallback((sp) => {
     setStockList(prev => {
+      const total = prev.reduce((sum, item) => {
+        const s = speciesDb.find(x => x.id === item.id);
+        return sum + (s ? (s.bioload ?? 1) * item.count : 0);
+      }, 0);
+      if (tankSize > 0 && (total / tankSize) * 100 >= BIOLOAD_PCT_DISPLAY_CAP) return prev;
       const existing = prev.find(x => x.id === sp.id);
       if (existing) return prev.map(x => x.id === sp.id ? { ...x, count: x.count + 1 } : x);
       return [...prev, { id: sp.id, count: 1 }];
     });
-  }, []);
+  }, [speciesDb, tankSize]);
   const removeOneFromStock = useCallback((id) => {
     setStockList(prev => {
       const existing = prev.find(x => x.id === id);
@@ -164,12 +172,17 @@ export default function AquariumStockr() {
     const sp = speciesDb.find(s => s.id === item.id);
     return sum + (sp ? (sp.bioload ?? 1) * item.count : 0);
   }, 0);
-  const bioloadPct = tankCapacity > 0 ? Math.min((totalBioload / tankCapacity) * 100, 100) : 0;
+  const tankBioloadPct = tankCapacity > 0 ? (totalBioload / tankCapacity) * 100 : 0;
+  const bioloadPctAtCap = tankCapacity > 0 && tankBioloadPct >= BIOLOAD_PCT_DISPLAY_CAP;
+  const bioloadPct = Math.min(tankBioloadPct, 100);
   const bioloadOver = totalBioload > tankCapacity;
-  const bioloadOverflow = tankCapacity > 0 ? Math.max(0, (totalBioload / tankCapacity) * 100 - 100) : 0;
+  const bioloadOverflow = tankCapacity > 0 ? Math.max(0, tankBioloadPct - 100) : 0;
+
+  const formatCappedBioloadPct = (pct) =>
+    pct > BIOLOAD_PCT_DISPLAY_CAP ? `${BIOLOAD_PCT_DISPLAY_CAP}%+` : `${Math.round(Math.min(pct, BIOLOAD_PCT_DISPLAY_CAP))}%`;
 
   const stockStatus = () => {
-    const pct = tankCapacity > 0 ? (totalBioload / tankCapacity) * 100 : 0;
+    const pct = tankBioloadPct;
     if (pct === 0) return { text: "Add fish to get started", color: "rgba(176,222,255,0.4)" };
     if (pct < 30)  return { text: "Lightly stocked", color: "#80cbc4" };
     if (pct < 60)  return { text: "Getting there", color: "#00e5ff" };
@@ -180,7 +193,7 @@ export default function AquariumStockr() {
   };
 
   const barColor = () => {
-    const pct = tankCapacity > 0 ? (totalBioload / tankCapacity) * 100 : 0;
+    const pct = tankBioloadPct;
     if (pct > 100) return "#ff5252";
     if (pct > 85)  return "#ffd740";
     return "linear-gradient(90deg, #00e5ff, #69f0ae)";
@@ -1163,8 +1176,13 @@ export default function AquariumStockr() {
                   <div style={{ marginTop: 16, display: "flex", gap: 20, flexWrap: "wrap", paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.05)", fontSize: 13, color: "rgba(176,222,255,0.5)" }}>
                     <span>🐠 {totalFish} animal{totalFish !== 1 ? "s" : ""}</span>
                     <span>🔬 {stockedSpecies.length} species</span>
-                    <span style={{ color: status.color }}>⚡ {((totalBioload / tankCapacity) * 100).toFixed(0)}% capacity</span>
+                    <span style={{ color: status.color }}>⚡ {formatCappedBioloadPct(tankBioloadPct)} capacity</span>
                   </div>
+                )}
+                {bioloadPctAtCap && (
+                  <p style={{ marginTop: 12, fontSize: 12, color: "rgba(255,215,64,0.55)", lineHeight: 1.45 }}>
+                    {BIOLOAD_PCT_DISPLAY_CAP}% bioload cap reached — remove animals to add more.
+                  </p>
                 )}
               </div>
 
@@ -1188,7 +1206,7 @@ export default function AquariumStockr() {
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{sp.name}</div>
                             <div style={{ fontSize: 11, color: "rgba(176,222,255,0.35)" }}>
-                              {sp.bioload ?? 1} unit{(sp.bioload ?? 1) !== 1 ? "s" : ""}/fish · {itemBioload.toFixed(1)} total · {itemPct.toFixed(0)}% of tank
+                              {sp.bioload ?? 1} unit{(sp.bioload ?? 1) !== 1 ? "s" : ""}/fish · {itemBioload.toFixed(1)} total · {formatCappedBioloadPct(itemPct)} of tank
                             </div>
                           </div>
                           {/* Count controls */}
@@ -1205,13 +1223,16 @@ export default function AquariumStockr() {
                             >−</button>
                             <span style={{ fontSize: 16, fontWeight: 700, color: "#e0f0ff", minWidth: 28, textAlign: "center" }}>{count}</span>
                             <button
+                              type="button"
+                              disabled={bioloadPctAtCap}
                               onClick={() => addToStock(sp)}
+                              title={bioloadPctAtCap ? `${BIOLOAD_PCT_DISPLAY_CAP}% bioload cap` : undefined}
                               style={{
                                 width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(0,229,255,0.3)",
                                 background: "rgba(0,229,255,0.08)", color: "#00e5ff",
-                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                cursor: bioloadPctAtCap ? "not-allowed" : "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                transition: "all 0.15s",
+                                transition: "all 0.15s", opacity: bioloadPctAtCap ? 0.35 : 1,
                               }}
                             >+</button>
                             <button
@@ -1268,6 +1289,7 @@ export default function AquariumStockr() {
                     const count = getCount(sp.id);
                     const addedBioload = (sp.bioload ?? 1) * count;
                     const wouldOverstock = (totalBioload + (sp.bioload ?? 1)) > tankCapacity;
+                    const addBlockedAtCap = bioloadPctAtCap;
                     return (
                       <div key={sp.id} style={{
                         display: "flex", alignItems: "center", gap: 14,
@@ -1304,22 +1326,29 @@ export default function AquariumStockr() {
                         {/* Add/remove controls */}
                         {count === 0 ? (
                           <button
+                            type="button"
+                            disabled={addBlockedAtCap}
                             onClick={() => addToStock(sp)}
                             className="glow-btn"
                             style={{
                               padding: "8px 18px", borderRadius: 20, fontSize: 13, fontWeight: 600,
-                              fontFamily: "inherit", cursor: "pointer", transition: "all 0.2s ease",
-                              background: wouldOverstock
-                                ? "rgba(255,82,82,0.12)"
-                                : "rgba(0,229,255,0.1)",
-                              border: wouldOverstock
-                                ? "1px solid rgba(255,82,82,0.4)"
-                                : "1px solid rgba(0,229,255,0.3)",
-                              color: wouldOverstock ? "#ff5252" : "#00e5ff",
+                              fontFamily: "inherit", cursor: addBlockedAtCap ? "not-allowed" : "pointer", transition: "all 0.2s ease",
+                              background: addBlockedAtCap
+                                ? "rgba(255,255,255,0.06)"
+                                : wouldOverstock
+                                  ? "rgba(255,82,82,0.12)"
+                                  : "rgba(0,229,255,0.1)",
+                              border: addBlockedAtCap
+                                ? "1px solid rgba(255,255,255,0.12)"
+                                : wouldOverstock
+                                  ? "1px solid rgba(255,82,82,0.4)"
+                                  : "1px solid rgba(0,229,255,0.3)",
+                              color: addBlockedAtCap ? "rgba(176,222,255,0.35)" : wouldOverstock ? "#ff5252" : "#00e5ff",
                               whiteSpace: "nowrap",
+                              opacity: addBlockedAtCap ? 0.85 : 1,
                             }}
                           >
-                            {wouldOverstock ? "⚠ Add" : "+ Add"}
+                            {addBlockedAtCap ? `${BIOLOAD_PCT_DISPLAY_CAP}% cap` : wouldOverstock ? "⚠ Add" : "+ Add"}
                           </button>
                         ) : (
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -1334,14 +1363,22 @@ export default function AquariumStockr() {
                             >−</button>
                             <span style={{ fontSize: 15, fontWeight: 700, color: "#00e5ff", minWidth: 24, textAlign: "center" }}>{count}</span>
                             <button
+                              type="button"
+                              disabled={addBlockedAtCap}
                               onClick={() => addToStock(sp)}
+                              title={addBlockedAtCap ? `${BIOLOAD_PCT_DISPLAY_CAP}% bioload cap` : undefined}
                               style={{
                                 width: 30, height: 30, borderRadius: 8,
-                                border: wouldOverstock ? "1px solid rgba(255,82,82,0.4)" : "1px solid rgba(0,229,255,0.3)",
-                                background: wouldOverstock ? "rgba(255,82,82,0.08)" : "rgba(0,229,255,0.08)",
-                                color: wouldOverstock ? "#ff5252" : "#00e5ff",
-                                cursor: "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
+                                border: addBlockedAtCap
+                                  ? "1px solid rgba(255,255,255,0.1)"
+                                  : wouldOverstock ? "1px solid rgba(255,82,82,0.4)" : "1px solid rgba(0,229,255,0.3)",
+                                background: addBlockedAtCap
+                                  ? "rgba(255,255,255,0.04)"
+                                  : wouldOverstock ? "rgba(255,82,82,0.08)" : "rgba(0,229,255,0.08)",
+                                color: addBlockedAtCap ? "rgba(176,222,255,0.3)" : wouldOverstock ? "#ff5252" : "#00e5ff",
+                                cursor: addBlockedAtCap ? "not-allowed" : "pointer", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
                                 display: "flex", alignItems: "center", justifyContent: "center",
+                                opacity: addBlockedAtCap ? 0.35 : 1,
                               }}
                             >+</button>
                           </div>
