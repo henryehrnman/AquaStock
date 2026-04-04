@@ -4,6 +4,19 @@ import { SPECIES_WIKIPEDIA_SEARCH_TERMS } from "../../../config/speciesWikipedia
 /** Cached Wikipedia thumbnail URLs per species name (`NONE` = no image found). */
 const wikipediaImageCache = {};
 
+/** Turn a Commons thumb URL into the full-size file URL (when thumb 404s / wrong size). */
+function commonsFullImageFromThumbUrl(thumbUrl) {
+  try {
+    const u = new URL(thumbUrl);
+    if (!u.hostname.includes("wikimedia.org")) return null;
+    const next = u.pathname.replace(/\/commons\/thumb(\/.+)\/\d+px-[^/]+$/, "/commons$1");
+    if (next === u.pathname) return null;
+    return `${u.origin}${next}`;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Resolve a thumbnail via Wikipedia REST summary, then action=query pageimages,
  * then generator search with "aquarium" (CORS-friendly with origin=* on api.php).
@@ -17,8 +30,12 @@ async function fetchWikipediaThumbnail(displayName) {
     );
     if (res.ok) {
       const data = await res.json();
+      // Use the URL Wikipedia returns — do not rewrite px size (e.g. 330px→300px often 404s on Commons).
       if (data.thumbnail?.source) {
-        return data.thumbnail.source.replace(/\/\d+px-/, "/300px-");
+        return data.thumbnail.source;
+      }
+      if (data.originalimage?.source) {
+        return data.originalimage.source;
       }
     }
 
@@ -57,9 +74,11 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {}, o
   const [src, setSrc] = useState(null);
   const [failed, setFailed] = useState(false);
   const triedWikiAfterDbFail = useRef(false);
+  const triedCommonsFull = useRef(false);
 
   useEffect(() => {
     triedWikiAfterDbFail.current = false;
+    triedCommonsFull.current = false;
     setFailed(false);
 
     if (dbUrl) {
@@ -94,6 +113,14 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {}, o
   }, [name, dbUrl]);
 
   const handleError = () => {
+    const full = src ? commonsFullImageFromThumbUrl(src) : null;
+    if (full && !triedCommonsFull.current) {
+      triedCommonsFull.current = true;
+      wikipediaImageCache[name] = full;
+      setSrc(full);
+      return;
+    }
+
     if (dbUrl && src === dbUrl && !triedWikiAfterDbFail.current) {
       triedWikiAfterDbFail.current = true;
       if (wikipediaImageCache[name] && wikipediaImageCache[name] !== "NONE") {
@@ -126,6 +153,7 @@ function SpeciesImage({ name, photo, size = 44, borderRadius = 12, style = {}, o
       src={src}
       alt={name}
       loading="lazy"
+      referrerPolicy="no-referrer"
       style={{
         height: size,
         width: "auto",
