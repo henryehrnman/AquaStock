@@ -186,23 +186,33 @@ export default function AquariumStockr() {
     return "linear-gradient(90deg, #00e5ff, #69f0ae)";
   };
 
-  // ── Matching: filter species & setups from tank + optional chemistry ───
+  // ── Matching: tank + water type always; temp/pH/GH/KH only if user enabled that section ───
+  const chemistryFilterActive = showParams;
+
   const compatible = speciesDb.filter((s) => {
     if (s.water !== waterType) return false;
     if (s.minTank > tankSize) return false;
-    if (showParams && (temp < s.tempMin || temp > s.tempMax)) return false;
-    if (showParams && (ph < s.phMin || ph > s.phMax)) return false;
-    if (showParams && (gh < s.ghMin || gh > s.ghMax)) return false;
-    if (showParams && (kh < s.khMin || kh > s.khMax)) return false;
+    if (chemistryFilterActive) {
+      if (temp < s.tempMin || temp > s.tempMax) return false;
+      if (ph < s.phMin || ph > s.phMax) return false;
+      if (gh < s.ghMin || gh > s.ghMax) return false;
+      if (kh < s.khMin || kh > s.khMax) return false;
+    }
     if (typeFilter !== "all" && s.type !== typeFilter) return false;
     if (diffFilter !== "all" && s.difficulty !== diffFilter) return false;
     return true;
   });
 
-  const popularPicks = speciesDb.filter(
-    (s) => s.popular && s.water === waterType && s.minTank <= tankSize &&
-    (!showParams || (temp >= s.tempMin && temp <= s.tempMax && ph >= s.phMin && ph <= s.phMax && gh >= s.ghMin && gh <= s.ghMax && kh >= s.khMin && kh <= s.khMax))
-  );
+  const popularPicks = speciesDb.filter((s) => {
+    if (!s.popular || s.water !== waterType || s.minTank > tankSize) return false;
+    if (!chemistryFilterActive) return true;
+    return (
+      temp >= s.tempMin && temp <= s.tempMax &&
+      ph >= s.phMin && ph <= s.phMax &&
+      gh >= s.ghMin && gh <= s.ghMax &&
+      kh >= s.khMin && kh <= s.khMax
+    );
+  });
 
   const matchingSetups = curatedSetups.filter((s) => s.water === waterType && s.minTank <= tankSize);
   const catalogReady = catalogStatus === "ready";
@@ -733,20 +743,30 @@ export default function AquariumStockr() {
               </div>
               <div className="results-summary" style={{
                 display: "flex", gap: 12, flexWrap: "wrap",
+                alignItems: "center",
                 background: "rgba(0,0,0,0.2)", padding: "10px 16px", borderRadius: 12,
                 fontSize: 13, color: "rgba(176,222,255,0.6)",
               }}>
                 <span>{waterType === "freshwater" ? "🌿" : "🌊"} {waterType}</span>
                 <span style={{ opacity: 0.3 }}>|</span>
-                <span>{tankSize}gal</span>
-                <span style={{ opacity: 0.3 }}>|</span>
-                <span>{temp}°F</span>
-                <span style={{ opacity: 0.3 }}>|</span>
-                <span>pH {ph.toFixed(1)}</span>
-                <span style={{ opacity: 0.3 }}>|</span>
-                <span>GH {gh} dGH</span>
-                <span style={{ opacity: 0.3 }}>|</span>
-                <span>KH {kh} dKH</span>
+                <span>{tankSize % 1 === 0 ? tankSize : tankSize.toFixed(1)} gal</span>
+                {chemistryFilterActive && (
+                  <>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>{temp}°F</span>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>pH {ph.toFixed(1)}</span>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>GH {gh} dGH</span>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>KH {kh} dKH</span>
+                  </>
+                )}
+                {!chemistryFilterActive && (
+                  <span style={{ fontSize: 11, color: "rgba(176,222,255,0.35)", fontStyle: "italic" }}>
+                    · matches use tank size and water type only
+                  </span>
+                )}
               </div>
             </div>
 
@@ -883,7 +903,11 @@ export default function AquariumStockr() {
                 <div style={{ padding: 48, textAlign: "center", color: "rgba(176,222,255,0.4)" }}>
                   <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
                   <p style={{ fontSize: 16 }}>No species match your current parameters.</p>
-                  <p style={{ fontSize: 13, marginTop: 8 }}>Try adjusting your tank size, temperature, pH, GH, or KH.</p>
+                  <p style={{ fontSize: 13, marginTop: 8 }}>
+                    {chemistryFilterActive
+                      ? "Try adjusting your tank size, temperature, pH, GH, or KH."
+                      : "Try a larger tank or switch water type (water chemistry is not filtering this list)."}
+                  </p>
                 </div>
               ) : (
                 compatible.map((sp, i) => (
@@ -950,7 +974,7 @@ export default function AquariumStockr() {
                             </div>
                           </div>
 
-                          {/* Parameter bars */}
+                          {/* Parameter bars — compare to your water only when chemistry filters are active */}
                           <div className="detail-bars" style={{ marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
                             {statRows.map(({ label, value, min, max, cur, absMin, absMax }) => {
                               const rangeW = absMax - absMin;
@@ -958,6 +982,23 @@ export default function AquariumStockr() {
                               const barWidth = ((max - min) / rangeW) * 100;
                               const markerPos = ((cur - absMin) / rangeW) * 100;
                               const inRange = cur >= min && cur <= max;
+                              if (!chemistryFilterActive) {
+                                return (
+                                  <div key={label}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                                      <span style={{ fontSize: 11, color: "rgba(176,222,255,0.4)", fontWeight: 500 }}>{label}</span>
+                                      <span style={{ fontSize: 11, fontWeight: 600, color: "rgba(176,222,255,0.65)" }}>{value}</span>
+                                    </div>
+                                    <div style={{ position: "relative", height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
+                                      <div style={{
+                                        position: "absolute", top: 0, height: "100%", borderRadius: 4,
+                                        left: `${barLeft}%`, width: `${barWidth}%`,
+                                        background: "rgba(0,229,255,0.35)",
+                                      }} />
+                                    </div>
+                                  </div>
+                                );
+                              }
                               return (
                                 <div key={label}>
                                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
@@ -965,13 +1006,11 @@ export default function AquariumStockr() {
                                     <span style={{ fontSize: 11, fontWeight: 700, color: inRange ? "#00e5ff" : "#ff5252" }}>{value}</span>
                                   </div>
                                   <div style={{ position: "relative", height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "visible" }}>
-                                    {/* Species range bar */}
                                     <div style={{
                                       position: "absolute", top: 0, height: "100%", borderRadius: 4,
                                       left: `${barLeft}%`, width: `${barWidth}%`,
                                       background: inRange ? "rgba(0,229,255,0.5)" : "rgba(255,82,82,0.4)",
                                     }} />
-                                    {/* Current value marker */}
                                     <div style={{
                                       position: "absolute", top: "50%", transform: "translate(-50%, -50%)",
                                       left: `${Math.min(Math.max(markerPos, 2), 98)}%`,
@@ -985,6 +1024,11 @@ export default function AquariumStockr() {
                               );
                             })}
                           </div>
+                          {!chemistryFilterActive && (
+                            <p style={{ marginTop: 14, fontSize: 11, color: "rgba(176,222,255,0.35)", lineHeight: 1.5 }}>
+                              Add water parameters on setup to compare these ranges to your tank and filter the species list.
+                            </p>
+                          )}
                         </div>
                       );
                     })()}
