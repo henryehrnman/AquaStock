@@ -1,0 +1,2 @@
+id,name,type,water,min_tank,temp_min,temp_max,ph_min,ph_max,gh_min,gh_max,kh_min,kh_max,school,bioload,difficulty,img,photo,color,description,popular
+100,Goldfish,fish,freshwater,30,65,75,6.5,8.0,5,20,2,12,1,2.50,beginner,🐟,,#ffb300,"Hardy coldwater carp; needs strong filtration and room to grow.",true
