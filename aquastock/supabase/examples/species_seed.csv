@@ -1,0 +1,264 @@
+id,name,type,water,min_tank,temp_min,temp_max,ph_min,ph_max,gh_min,gh_max,kh_min,kh_max,school,bioload,difficulty,img,photo,color,description,popular
+1,Neon Tetra,fish,freshwater,10,70,82,5,7.5,1,10,1,5,6,1.0,beginner,🐟,,#00e5ff,Brilliant iridescent blue and red. Peaceful schooling fish perfect for community tanks.,true
+2,Cardinal Tetra,fish,freshwater,10,73,84,4.5,7,1,8,1,4,8,1.0,beginner,🐟,,#00e5ff,Deeper red than neons extending full body length. Stunning in blackwater setups.,true
+3,Rummy Nose Tetra,fish,freshwater,15,75,84,5.5,7,2,8,2,6,8,2.0,intermediate,🐟,,#00e5ff,Bright red nose with striped tail. Tight schooling behavior is mesmerizing.,false
+4,Ember Tetra,fish,freshwater,5,73,84,5,7,1,8,1,5,8,1.0,beginner,🐟,,#00e5ff,Tiny glowing orange jewels. Perfect for nano planted tanks.,true
+5,Black Neon Tetra,fish,freshwater,10,73,81,5.5,7.5,2,12,1,6,6,1.0,beginner,🐟,,#00e5ff,Elegant black and iridescent green stripe. Hardy and underrated.,false
+6,Congo Tetra,fish,freshwater,20,73,82,6,7.5,3,12,2,8,6,2.0,intermediate,🐟,,#00e5ff,Shimmering rainbow iridescence with flowing fins. A showstopper in groups.,false
+7,Serpae Tetra,fish,freshwater,10,72,79,5,7.8,2,15,1,8,6,1.0,beginner,🐟,,#00e5ff,Deep red body with black diamond marking. Can be nippy — keep in larger groups.,false
+8,Glowlight Tetra,fish,freshwater,10,74,82,5.5,7,2,10,1,6,6,1.0,beginner,🐟,,#00e5ff,Translucent body with glowing orange-red stripe. Peaceful and elegant.,false
+9,Green Neon Tetra,fish,freshwater,10,75,85,4,6.5,0,6,0,3,10,1.0,intermediate,🐟,,#00e5ff,Smaller cousin of the neon with more green-blue iridescence. Loves soft water.,false
+10,Diamond Tetra,fish,freshwater,15,72,82,5.5,7.5,2,12,2,8,6,2.0,beginner,🐟,,#00e5ff,Sparkling scales that flash like diamonds under aquarium lights.,false
+11,Lemon Tetra,fish,freshwater,10,72,82,5.5,7.5,2,12,2,8,6,1.0,beginner,🐟,,#00e5ff,Translucent yellow body with bright eye. Very peaceful community fish.,false
+12,Bloodfin Tetra,fish,freshwater,10,64,82,6,8,3,15,2,10,6,1.0,beginner,🐟,,#00e5ff,Silver body with vivid red fins. Extremely hardy and long-lived.,false
+13,Buenos Aires Tetra,fish,freshwater,20,64,82,5.5,8.5,3,20,2,12,6,2.0,beginner,🐟,,#00e5ff,Larger tetra with red fins. Very hardy but may eat live plants.,false
+14,Emperor Tetra,fish,freshwater,10,73,81,5,7.5,1,10,1,5,6,1.0,beginner,🐟,,#00e5ff,Dark body with bright blue eyes and sweeping tail fins. Regal appearance.,false
+15,Silvertip Tetra,fish,freshwater,10,72,82,6,7.5,2,12,2,8,6,1.0,beginner,🐟,,#00e5ff,Active schooler with silver-tipped fins. Great mid-water swimmer.,false
+16,Cherry Barb,fish,freshwater,10,73,81,6,7,4,15,2,8,6,1.0,beginner,🐟,,#00e5ff,"Vibrant red coloration. Hardy, peaceful, and great for planted tanks.",true
+17,Tiger Barb,fish,freshwater,20,68,79,6,7.5,4,15,2,10,6,2.0,beginner,🐟,,#00e5ff,Bold orange and black stripes. Semi-aggressive — keep in groups of 6+ to reduce fin nipping.,false
+18,Odessa Barb,fish,freshwater,20,70,79,6,7,5,15,2,10,6,2.0,beginner,🐟,,#00e5ff,Males display an intense crimson red stripe. Underappreciated gem.,false
+19,Gold Barb,fish,freshwater,10,64,75,6,8,4,18,2,10,6,1.0,beginner,🐟,,#00e5ff,Bright golden-yellow body. Very peaceful and hardy for cooler tanks.,false
+20,Rosy Barb,fish,freshwater,20,64,72,6,8,4,18,2,12,6,2.0,beginner,🐟,,#00e5ff,Rosy pink males with green sheen. Tolerates cooler temperatures.,false
+21,Checker Barb,fish,freshwater,15,68,79,6,7.5,3,12,2,8,6,2.0,beginner,🐟,,#00e5ff,Checkerboard scale pattern. Peaceful alternative to tiger barbs.,false
+22,Denison Barb,fish,freshwater,30,65,79,6.5,7.8,5,15,2,10,6,3.0,intermediate,🐟,,#00e5ff,Torpedo-shaped with red and black racing stripes. Needs swimming space.,true
+23,Five-Banded Barb,fish,freshwater,15,68,79,5,7,2,10,1,6,6,2.0,beginner,🐟,,#00e5ff,Five distinct vertical bands. Peaceful and attractive schooler.,false
+24,Harlequin Rasbora,fish,freshwater,10,73,82,6,7.5,2,10,1,5,8,1.0,beginner,🐟,,#00e5ff,Copper and black wedge pattern. Peaceful and looks stunning in groups.,true
+25,Chili Rasbora,fish,freshwater,5,68,82,4,7,1,6,1,4,8,1.0,intermediate,🐟,,#00e5ff,Tiny ruby-red fish perfect for nano tanks. Thrives in soft acidic water.,true
+26,Galaxy Rasbora (Celestial Pearl Danio),fish,freshwater,5,72,79,6.5,7.5,2,10,1,5,6,1.0,beginner,🐟,,#00e5ff,Deep blue body covered in pearl-like spots with red fins. Nano tank superstar.,true
+27,Espei Rasbora (Lambchop),fish,freshwater,10,73,82,5,7,2,10,1,5,8,1.0,beginner,🐟,,#00e5ff,Copper body with lambchop-shaped marking. Peaceful and attractive.,false
+28,Scissortail Rasbora,fish,freshwater,20,73,78,6,7.5,2,12,2,8,6,2.0,beginner,🐟,,#00e5ff,Distinctive fork-tail with black and white markings. Active swimmer.,false
+29,Exclamation Point Rasbora,fish,freshwater,5,73,82,5,7,1,8,1,5,8,1.0,intermediate,🐟,,#00e5ff,Tiny with exclamation mark body pattern. Great for nano setups.,false
+30,Phoenix Rasbora,fish,freshwater,5,68,79,5.5,7,1,8,1,5,8,1.0,intermediate,🐟,,#00e5ff,Fiery orange coloration on a tiny body. Soft water preferred.,false
+31,Zebra Danio,fish,freshwater,10,64,75,6,8,3,15,2,10,6,1.0,beginner,🐟,,#00e5ff,Classic horizontal stripes. Incredibly hardy and active. Great beginner fish.,true
+32,Pearl Danio,fish,freshwater,10,64,75,6,7.5,3,12,2,8,6,1.0,beginner,🐟,,#00e5ff,Pearlescent sheen with orange accents. Hardy and peaceful.,false
+33,Celestial Pearl Danio,fish,freshwater,5,72,79,6.5,7.5,2,10,1,5,6,1.0,beginner,🐟,,#00e5ff,Galaxy-patterned micro fish. Stunning in planted nano tanks.,true
+34,Giant Danio,fish,freshwater,30,72,81,6,8,3,15,2,10,6,3.0,beginner,🐟,,#00e5ff,Large active danio with blue and gold stripes. Needs lots of swimming room.,false
+35,White Cloud Mountain Minnow,fish,freshwater,10,57,72,6,8,5,20,2,12,6,1.0,beginner,🐟,,#00e5ff,Colorful coldwater fish. Red fins and iridescent body. No heater needed.,true
+36,Guppy,fish,freshwater,5,72,82,6.8,7.8,8,20,5,15,3,1.0,beginner,🐟,,#00e5ff,Endlessly colorful males with flowing tails. Breed prolifically.,true
+37,Endler's Livebearer,fish,freshwater,5,75,86,6.5,8,8,20,4,12,3,1.0,beginner,🐟,,#00e5ff,Tiny vibrant males with wild neon patterns. Prolific breeders.,true
+38,Platy,fish,freshwater,10,70,80,7,8.2,10,25,5,15,3,1.0,beginner,🐟,,#00e5ff,Chunky colorful livebearers in every color imaginable. Extremely easy to keep.,true
+39,Swordtail,fish,freshwater,15,72,82,7,8.3,10,25,5,15,3,2.0,beginner,🐟,,#00e5ff,Males sport an iconic sword-shaped tail extension. Active and colorful.,true
+40,Molly,fish,freshwater,20,72,82,7,8.5,10,30,8,20,3,2.0,beginner,🐟,,#00e5ff,"Available in black, white, dalmatian, and more. Appreciates some salt.",true
+41,Least Killifish,fish,freshwater,5,68,80,6.5,8,5,20,3,12,3,1.0,beginner,🐟,,#00e5ff,One of the smallest livebearers. Great for nano tanks.,false
+42,German Blue Ram,fish,freshwater,20,78,85,5,7,0,6,0,3,2,2.0,intermediate,🐟,,#00e5ff,Electric blue and gold. A dwarf cichlid with incredible personality.,true
+43,Bolivian Ram,fish,freshwater,20,72,79,6,7.5,2,12,2,8,2,2.0,beginner,🐟,,#00e5ff,Hardier cousin of the German Blue Ram. Great personality in a peaceful package.,true
+44,Apistogramma Cacatuoides,fish,freshwater,15,73,84,5,7,1,10,1,5,2,2.0,intermediate,🐟,,#00e5ff,Cockatoo dwarf cichlid with flamboyant dorsal fin rays. Full of attitude.,true
+45,Apistogramma Borellii,fish,freshwater,15,72,82,5,7,1,10,1,5,2,2.0,intermediate,🐟,,#00e5ff,Powder blue males with yellow accents. One of the easier apistos.,false
+46,Kribensis,fish,freshwater,20,75,80,5.5,7.5,3,12,2,8,2,2.0,beginner,🐟,,#00e5ff,Purple belly during breeding. One of the easiest cichlids to keep.,true
+47,Keyhole Cichlid,fish,freshwater,20,72,81,5.5,7.5,2,10,2,8,1,2.0,beginner,🐟,,#00e5ff,Peaceful cichlid with keyhole-shaped marking. Shy but charming.,false
+48,Yellow Lab (Labidochromis caeruleus),fish,freshwater,30,75,82,7.5,8.5,10,20,6,12,1,3.0,beginner,🐟,,#00e5ff,Bright electric yellow. One of the least aggressive mbuna.,true
+49,Red Zebra,fish,freshwater,40,75,82,7.5,8.5,10,20,6,12,1,5.0,intermediate,🐟,,#00e5ff,Vivid orange-red mbuna. Active and assertive personality.,false
+50,Demasoni,fish,freshwater,40,75,82,7.5,8.5,10,20,6,12,12,5.0,intermediate,🐟,,#00e5ff,Deep blue with black barring. Must be overstocked to spread aggression.,false
+51,Peacock Cichlid (Aulonocara),fish,freshwater,40,75,82,7.5,8.5,8,18,6,12,1,5.0,intermediate,🐟,,#00e5ff,"Brilliant metallic blues, reds, and yellows. More peaceful than mbuna.",true
+52,Frontosa,fish,freshwater,75,75,82,7.8,9,10,20,8,14,1,8.0,advanced,🐟,,#00e5ff,Majestic Tanganyikan giant with a prominent forehead hump. Slow and regal.,false
+53,Shell Dweller (Neolamprologus multifasciatus),fish,freshwater,10,75,82,7.8,9,10,20,8,14,4,1.0,intermediate,🐟,,#00e5ff,Tiny cichlid that lives in empty snail shells. Fascinating social behavior.,true
+54,Tropheus Duboisi,fish,freshwater,55,75,82,7.8,9,10,20,8,14,12,5.0,advanced,🐟,,#00e5ff,Juveniles have white spots that transform into a banded adult pattern.,false
+55,Oscar,fish,freshwater,75,74,81,6,8,5,20,2,10,1,8.0,intermediate,🐟,,#00e5ff,Dog-like personality. Recognizes its owner. Grows large and messy but lovable.,true
+56,Jack Dempsey,fish,freshwater,55,72,86,6,7,5,18,2,10,1,5.0,intermediate,🐟,,#00e5ff,Iridescent blue spangles on a dark body. Named for the famous boxer.,false
+57,Electric Blue Acara,fish,freshwater,30,72,82,6,7.5,3,15,2,8,2,3.0,beginner,🐟,,#00e5ff,Stunning metallic blue. One of the most peaceful medium-sized cichlids.,true
+58,Firemouth Cichlid,fish,freshwater,30,75,86,6.5,8,5,15,3,10,2,3.0,intermediate,🐟,,#00e5ff,Flares its bright red throat when displaying. More bark than bite.,false
+59,Green Terror,fish,freshwater,55,68,80,6,8,5,20,2,12,1,5.0,intermediate,🐟,,#00e5ff,Metallic green and blue with orange-edged fins. Can be aggressive.,false
+60,Severum,fish,freshwater,55,73,84,5.5,7.5,3,12,2,8,1,5.0,intermediate,🐟,,#00e5ff,Disc-shaped with beautiful banding. Calmer alternative to more aggressive cichlids.,false
+61,Dwarf Gourami,fish,freshwater,10,72,82,6,7.5,4,10,1,5,1,1.0,beginner,🐟,,#00e5ff,Brilliant blues and reds. A labyrinth fish that breathes air from the surface.,true
+62,Pearl Gourami,fish,freshwater,20,77,82,5.5,7.5,2,12,2,8,1,2.0,beginner,🐟,,#00e5ff,Lace-like pearl pattern across the body. One of the most beautiful gouramis.,true
+63,Honey Gourami,fish,freshwater,10,72,82,6,7.5,4,10,1,5,1,1.0,beginner,🐟,,#00e5ff,Warm honey-gold coloration. Smaller and more peaceful than dwarf gouramis.,true
+64,Sparkling Gourami,fish,freshwater,5,72,80,5.5,7.5,2,10,1,5,2,1.0,beginner,🐟,,#00e5ff,Tiny gourami that makes audible croaking sounds. Sparkling blue eyes.,false
+65,Three Spot Gourami,fish,freshwater,20,72,82,6,8,4,15,2,10,1,2.0,beginner,🐟,,#00e5ff,"Classic gourami in blue, gold, and opaline varieties. Hardy and adaptable.",false
+66,Chocolate Gourami,fish,freshwater,15,75,86,4,6,0,4,0,3,2,2.0,advanced,🐟,,#00e5ff,Rich chocolate brown with gold stripes. Requires very soft acidic water.,false
+67,Giant Gourami,fish,freshwater,200,72,82,6.5,8,5,20,3,12,1,8.0,advanced,🐟,,#00e5ff,Grows up to 2 feet. Recognizes owners and has dog-like personality.,false
+68,Betta Splendens,fish,freshwater,5,76,82,6,7.5,1,12,1,5,1,1.0,beginner,🐟,,#00e5ff,Stunning flowing fins. Keep males solo — territorial but full of personality.,true
+69,Betta Imbellis,fish,freshwater,5,72,82,5,7,1,8,1,5,2,1.0,intermediate,🐟,,#00e5ff,Peaceful wild betta. Can sometimes be kept in pairs. Subtle iridescent beauty.,false
+70,Betta Albimarginata,fish,freshwater,10,72,79,5,7,1,8,1,5,2,1.0,intermediate,🐟,,#00e5ff,Mouthbrooding betta with red-edged fins. Can be kept in groups.,false
+71,Corydoras Catfish,fish,freshwater,10,72,79,6,7.8,2,15,2,8,4,1.0,beginner,🐟,,#00e5ff,Adorable bottom-dwellers that keep your substrate clean. Very social.,true
+72,Pygmy Corydoras,fish,freshwater,5,72,79,6,7.5,2,12,2,8,6,1.0,beginner,🐟,,#00e5ff,Tiny cories that swim in midwater. Adorable in large groups.,true
+73,Panda Corydoras,fish,freshwater,10,68,77,6,7.5,2,12,2,8,4,1.0,beginner,🐟,,#00e5ff,Black and white panda markings. Prefers slightly cooler temperatures.,true
+74,Sterbai Corydoras,fish,freshwater,10,75,82,6,7.5,2,12,2,8,4,1.0,beginner,🐟,,#00e5ff,White spots on dark body with orange pectoral fins. Heat-tolerant cory.,false
+75,Bristlenose Pleco,fish,freshwater,20,73,81,6.5,7.5,2,15,1,8,1,2.0,beginner,🐟,,#00e5ff,Excellent algae eater. Stays small unlike common plecos.,true
+76,Clown Pleco,fish,freshwater,10,73,82,6,7.5,3,12,2,8,1,1.0,beginner,🐟,,#00e5ff,Small pleco with bold striping pattern. Eats driftwood.,false
+77,Otocinclus,fish,freshwater,10,72,79,6,7.5,2,12,2,8,4,1.0,intermediate,🐟,,#00e5ff,Tiny algae eating machines. Sensitive at first but excellent once established.,true
+78,Whiptail Catfish,fish,freshwater,20,72,79,6,7.5,2,12,2,8,1,2.0,intermediate,🐟,,#00e5ff,Bizarre elongated body and tail. A fascinating conversation starter.,false
+79,Glass Catfish,fish,freshwater,15,75,82,6.5,7.5,2,10,2,6,4,2.0,intermediate,🐟,,#00e5ff,Completely transparent body showing skeleton and organs. Unique.,false
+80,Upside-Down Catfish,fish,freshwater,20,72,79,6,7.5,4,15,2,10,4,2.0,beginner,🐟,,#00e5ff,Swims belly-up. One of the most amusing fish to watch.,false
+81,Pictus Catfish,fish,freshwater,30,72,79,6,7.5,5,15,2,10,3,3.0,intermediate,🐟,,#00e5ff,Sleek silver body with black spots and long whiskers. Active at night.,false
+82,Kuhli Loach,fish,freshwater,15,75,86,5.5,7,1,8,1,5,4,2.0,beginner,🐟,,#00e5ff,Snake-like striped loach that hides during the day. Adorable noodle fish.,true
+83,Clown Loach,fish,freshwater,75,77,86,6,7.5,5,12,2,8,5,8.0,intermediate,🐟,,#00e5ff,Bold orange and black bands. Playful and social but grows very large.,true
+84,Hillstream Loach,fish,freshwater,15,64,75,6.5,7.5,4,12,2,8,3,2.0,intermediate,🐟,,#00e5ff,Flattened body clings to rocks in fast flow. Looks like a tiny stingray.,true
+85,Yoyo Loach,fish,freshwater,20,73,82,6,7.5,4,15,2,10,4,2.0,beginner,🐟,,#00e5ff,"Y-O-Y-O pattern on body. Active, social, and great snail control.",false
+86,Dojo/Weather Loach,fish,freshwater,30,60,75,6.5,8,5,15,3,10,3,3.0,beginner,🐟,,#00e5ff,Becomes active before storms. Friendly eel-like fish that tolerates cold.,false
+87,Dwarf Chain Loach,fish,freshwater,20,72,82,6,7.5,3,12,2,8,6,2.0,intermediate,🐟,,#00e5ff,Beautiful chain-link pattern. Active during the day unlike most loaches.,false
+88,Zebra Loach,fish,freshwater,20,73,79,6,7.5,3,12,2,8,4,2.0,beginner,🐟,,#00e5ff,Tight zebra stripes. Peaceful and stays a manageable size.,false
+89,Angelfish,fish,freshwater,30,76,84,6,7.5,3,10,1,5,2,3.0,intermediate,🐟,,#00e5ff,Majestic and graceful. A stunning centerpiece fish for medium to large tanks.,true
+90,Discus,fish,freshwater,55,82,88,5.5,7,0,5,0,3,5,5.0,advanced,🐟,,#00e5ff,The king of freshwater aquariums. Requires pristine water but rewards with breathtaking beauty.,true
+91,Altum Angelfish,fish,freshwater,55,78,86,4.5,6.5,0,5,0,3,4,5.0,advanced,🐟,,#00e5ff,Taller and more wild-looking than common angels. Requires soft acidic water.,false
+92,Clown Killifish,fish,freshwater,5,72,79,5.5,7,2,8,1,5,3,1.0,intermediate,🐟,,#00e5ff,Tiny surface dweller with rocket-shaped tail. Brilliant blue and red.,true
+93,Norman's Lampeye,fish,freshwater,5,72,79,6,7.5,2,10,1,5,6,1.0,intermediate,🐟,,#00e5ff,Glowing blue eye tops visible even in dim light. Delicate but beautiful.,false
+94,Golden Wonder Killifish,fish,freshwater,20,72,80,6,7.5,3,15,2,10,1,2.0,beginner,🐟,,#00e5ff,Metallic gold surface predator. Will eat very small fish but otherwise peaceful.,false
+95,Gardneri Killifish,fish,freshwater,10,72,79,6,7.5,2,10,1,5,2,1.0,intermediate,🐟,,#00e5ff,Stunning blue and red patterns. One of the most colorful freshwater fish.,true
+96,Boesemani Rainbow,fish,freshwater,30,72,82,7,8,8,18,5,12,6,3.0,intermediate,🐟,,#00e5ff,"Half blue, half orange. Males color up spectacularly with age.",true
+97,Neon Dwarf Rainbow,fish,freshwater,10,72,79,5.5,7.5,3,12,2,8,6,1.0,beginner,🐟,,#00e5ff,Compact rainbow with neon blue shimmer. Perfect for smaller tanks.,true
+98,Turquoise Rainbow,fish,freshwater,30,72,79,7,8,8,18,5,12,6,3.0,intermediate,🐟,,#00e5ff,Deep turquoise body that intensifies with maturity. Needs a group.,false
+99,Threadfin Rainbow,fish,freshwater,10,75,82,6.5,7.5,3,12,2,8,6,1.0,intermediate,🐟,,#00e5ff,Males have incredible elongated fin filaments. Delicate and stunning.,false
+100,Celebes Rainbow,fish,freshwater,15,72,82,7,8,8,18,5,12,6,2.0,intermediate,🐟,,#00e5ff,Translucent body with neon blue line and sail-like fins. Unique beauty.,false
+101,Red Irian Rainbow,fish,freshwater,30,72,79,7,8,8,18,5,12,6,3.0,intermediate,🐟,,#00e5ff,Deep red coloration in mature males. Active and social.,false
+102,Paradise Fish,fish,freshwater,15,60,80,6,8,5,20,3,12,1,2.0,beginner,🐟,,#00e5ff,Stunning red and blue stripes. Hardy enough for unheated tanks. Can be feisty.,false
+103,Wrestling Halfbeak,fish,freshwater,15,72,82,6.5,7.5,3,12,2,8,3,2.0,intermediate,🐟,,#00e5ff,Needle-nosed surface dweller. Males 'wrestle' with locked jaws.,false
+104,Scarlet Badis,fish,freshwater,5,72,79,6.5,7.5,2,10,1,5,1,1.0,intermediate,🐟,,#00e5ff,One of the smallest known fish. Males are scarlet red with blue iridescence.,true
+105,Pea Puffer,fish,freshwater,5,74,82,6.5,7.5,3,12,2,8,1,1.0,intermediate,🐟,,#00e5ff,World's smallest pufferfish. Tiny but packed with personality and intelligence.,true
+106,Figure Eight Puffer,fish,freshwater,15,72,82,7.5,8.5,10,20,8,15,1,2.0,intermediate,🐟,,#00e5ff,Brackish puffer with figure-8 marking on back. Curious and interactive.,false
+107,Rope Fish,fish,freshwater,55,72,82,6,7.5,5,15,2,10,1,5.0,intermediate,🐟,,#00e5ff,Snake-like oddball with tiny pectoral fins. Peaceful nocturnal predator.,false
+108,Elephant Nose Fish,fish,freshwater,30,73,82,6,7.5,2,10,2,8,1,3.0,advanced,🐟,,#00e5ff,Uses electrical pulses to navigate. Trunk-like mouth probe is fascinating.,false
+109,African Butterfly Fish,fish,freshwater,20,75,86,6,7.5,2,12,2,8,1,2.0,intermediate,🐟,,#00e5ff,Surface dweller with wing-like pectoral fins. Ancient-looking predator.,false
+110,Siamese Algae Eater,fish,freshwater,20,75,79,6,7.5,3,15,2,10,1,2.0,beginner,🐟,,#00e5ff,True algae eater that consumes black beard algae. Active swimmer.,true
+111,Chinese Algae Eater,fish,freshwater,30,72,82,6,8,5,18,3,12,1,3.0,beginner,🐟,,#00e5ff,Good algae eater when young. Can become territorial with age.,false
+112,Flying Fox,fish,freshwater,20,72,79,6,7.5,3,12,2,8,1,2.0,beginner,🐟,,#00e5ff,Often confused with SAE. Eats some algae and is generally peaceful.,false
+113,Archer Fish,fish,freshwater,30,75,86,7,8,8,20,5,15,3,3.0,intermediate,🐟,,#00e5ff,Shoots water jets to knock insects off plants above water. Brackish preferred.,false
+114,Bichir (Senegal),fish,freshwater,55,75,82,6.5,7.5,5,20,2,12,1,5.0,intermediate,🐟,,#00e5ff,Prehistoric dinosaur fish with armored scales and lung-like swim bladder.,false
+115,Red Tail Shark,fish,freshwater,30,72,79,6.5,7.5,5,15,2,10,1,3.0,intermediate,🐟,,#00e5ff,Jet black body with vibrant red tail. Territorial bottom dweller — keep one only.,false
+116,Rainbow Shark,fish,freshwater,30,72,79,6.5,7.5,5,15,2,10,1,3.0,intermediate,🐟,,#00e5ff,Dark body with red-orange fins. Less aggressive than red tail shark but still territorial.,false
+117,Hatchetfish,fish,freshwater,15,74,82,5,7,2,10,1,5,6,2.0,intermediate,🐟,,#00e5ff,Deep-bodied surface fish shaped like a hatchet. Can actually fly short distances.,false
+118,Pencilfish,fish,freshwater,10,72,82,5,7,1,8,1,5,6,1.0,intermediate,🐟,,#00e5ff,Slender hovering fish that rests at an angle. Peaceful and subtle beauty.,false
+119,Ricefish (Medaka),fish,freshwater,5,64,75,6.5,8,5,20,3,12,4,1.0,beginner,🐟,,#00e5ff,Hardy little fish popular in Asia for centuries. Many color varieties. Cool water ok.,true
+120,Vampire Pleco (L029),fish,freshwater,30,73,81,6,7.5,2,10,2,8,1,3.0,intermediate,🐟,,#00e5ff,Striking black and white banding. Needs driftwood and some current.,false
+200,Ocellaris Clownfish,fish,saltwater,20,74,80,8,8.4,8,12,8,12,2,2.0,beginner,🐟,,#00e5ff,"The iconic 'Nemo'. Hardy, colorful, and bonds with anemones.",true
+201,Percula Clownfish,fish,saltwater,20,74,80,8,8.4,8,12,8,12,2,2.0,beginner,🐟,,#00e5ff,True percula with thicker black outlines. Slightly more demanding than ocellaris.,true
+202,Maroon Clownfish,fish,saltwater,30,74,80,8,8.4,8,12,8,12,2,3.0,intermediate,🐟,,#00e5ff,Largest and most aggressive clownfish. Deep maroon with gold or white stripes.,false
+203,Clarkii Clownfish,fish,saltwater,20,74,80,8,8.4,8,12,8,12,2,2.0,beginner,🐟,,#00e5ff,Hardy and adaptable. Accepts many different anemone species as hosts.,false
+204,Royal Gramma,fish,saltwater,20,72,78,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Striking purple and yellow bicolor. A peaceful reef-safe cave dweller.,true
+205,Yellow Tang,fish,saltwater,75,72,78,8.1,8.4,8,12,8,12,1,8.0,intermediate,🐟,,#00e5ff,Electric yellow coloration. Active swimmer needing room to roam.,true
+206,Blue Hippo Tang,fish,saltwater,75,72,78,8.1,8.4,8,12,8,12,1,8.0,intermediate,🐟,,#00e5ff,The real 'Dory'. Vibrant blue with black palette marking. Ich-prone.,true
+207,Kole Tang,fish,saltwater,55,72,78,8.1,8.4,8,12,8,12,1,5.0,intermediate,🐟,,#00e5ff,Brown body with fine horizontal striping. Excellent algae grazer for reefs.,false
+208,Tomini Tang,fish,saltwater,55,72,78,8.1,8.4,8,12,8,12,1,5.0,intermediate,🐟,,#00e5ff,Smaller tang suitable for medium tanks. Great algae control.,false
+209,Firefish Goby,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Elegant white body with fiery red tail. Peaceful and hardy. Needs a lid.,true
+210,Purple Firefish,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Purple-magenta variant of the firefish. Stunning but shy.,false
+211,Watchman Goby,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Partners with pistol shrimp in a symbiotic relationship. Fascinating behavior.,true
+212,Clown Goby,fish,saltwater,10,72,80,8.1,8.4,8,12,8,12,1,1.0,beginner,🐟,,#00e5ff,"Tiny goby that perches on coral branches. Comes in yellow, green, and citron.",true
+213,Mandarin Dragonet,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,advanced,🐟,,#00e5ff,Perhaps the most beautiful marine fish. Psychedelic patterns. Needs copepod population.,true
+214,Six Line Wrasse,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Six horizontal purple and orange lines. Active pest controller.,true
+215,Fairy Wrasse (Carpenter's),fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,intermediate,🐟,,#00e5ff,Spectacular multicolored display during flashing. Peaceful reef fish.,false
+216,Melanurus Wrasse,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,beginner,🐟,,#00e5ff,"Colorful pest eater. Consumes flatworms, bristleworms, and pyramidellid snails.",false
+217,Yellow Coris Wrasse,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,beginner,🐟,,#00e5ff,Bright yellow with a fun swimming style. Buries in sand at night.,false
+218,Flame Angelfish,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,intermediate,🐟,,#00e5ff,Fiery red-orange with black bars. May nip at corals — reef safe with caution.,true
+219,Coral Beauty Angelfish,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,intermediate,🐟,,#00e5ff,Deep purple and orange. One of the most popular dwarf angels.,false
+220,Lemonpeel Angelfish,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,intermediate,🐟,,#00e5ff,Bright lemon yellow with blue eye ring. May nip corals.,false
+221,Bicolor Blenny,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,"Half purple, half orange. Perches on rocks with comical expressions.",false
+222,Midas Blenny,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Golden yellow eel-shaped blenny. Hovers above rockwork with personality.,true
+223,Tailspot Blenny,fish,saltwater,10,72,80,8.1,8.4,8,12,8,12,1,1.0,beginner,🐟,,#00e5ff,Tiny algae-eating blenny with a distinctive tail spot. Perfect for nano reefs.,false
+224,Bangaii Cardinalfish,fish,saltwater,10,72,80,8.1,8.4,8,12,8,12,2,1.0,beginner,🐟,,#00e5ff,Striking black and silver with elongated fins. Mouthbrooding paternal care.,true
+225,Pajama Cardinalfish,fish,saltwater,10,72,80,8.1,8.4,8,12,8,12,3,1.0,beginner,🐟,,#00e5ff,"Polka dots, stripes, and big eyes. Looks like it's wearing pajamas.",false
+226,Chromis (Blue-Green),fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,5,2.0,beginner,🐟,,#00e5ff,Peaceful schooling damsel. Iridescent blue-green shimmer in groups.,true
+227,Yellowtail Damsel,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Electric blue body with yellow tail. Hardy but can become territorial.,false
+228,Flame Hawkfish,fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Brilliant red with black markings around eyes. Perches on corals and watches.,false
+229,Longnose Hawkfish,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,intermediate,🐟,,#00e5ff,Checkered red and white with elongated snout. Charismatic percher.,false
+230,Foxface Rabbitfish,fish,saltwater,55,72,80,8.1,8.4,8,12,8,12,1,5.0,intermediate,🐟,,#00e5ff,Yellow body with black and white fox-like face. Venomous spines. Great algae eater.,false
+231,Copperband Butterflyfish,fish,saltwater,55,72,80,8.1,8.4,8,12,8,12,1,5.0,advanced,🐟,,#00e5ff,Elegant vertical copper bands with long snout. Eats aiptasia anemones.,false
+232,Dottyback (Orchid),fish,saltwater,20,72,80,8.1,8.4,8,12,8,12,1,2.0,beginner,🐟,,#00e5ff,Vivid purple. Captive bred varieties are much less aggressive than wild.,false
+233,Neon Goby,fish,saltwater,10,72,80,8.1,8.4,8,12,8,12,2,1.0,beginner,🐟,,#00e5ff,Tiny neon blue-striped goby. Cleans parasites from larger fish.,false
+234,Engineer Goby,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,3,3.0,beginner,🐟,,#00e5ff,Black and white striped burrower. Creates elaborate tunnel systems.,false
+235,Lawnmower Blenny,fish,saltwater,30,72,80,8.1,8.4,8,12,8,12,1,3.0,beginner,🐟,,#00e5ff,Constantly grazes algae off rocks. Comical face and entertaining behavior.,true
+300,Amano Shrimp,invertebrate,freshwater,5,70,80,6.5,7.5,6,15,3,8,3,0.5,beginner,🦐,,#69f0ae,Champion algae eaters. Transparent with distinctive dots along the body.,true
+301,Cherry Shrimp,invertebrate,freshwater,5,65,80,6.2,8,4,8,3,8,6,0.5,beginner,🦐,,#69f0ae,Brilliant red neocaridina. Breed readily and create living jewels in your tank.,true
+302,Blue Dream Shrimp,invertebrate,freshwater,5,65,80,6.2,8,4,8,3,8,6,0.5,beginner,🦐,,#69f0ae,Deep blue neocaridina variety. Just as hardy as cherry shrimp.,true
+303,Orange Sakura Shrimp,invertebrate,freshwater,5,65,80,6.2,8,4,8,3,8,6,0.5,beginner,🦐,,#69f0ae,Vivid orange neocaridina. Great contrast against green plants.,false
+304,Yellow Shrimp,invertebrate,freshwater,5,65,80,6.2,8,4,8,3,8,6,0.5,beginner,🦐,,#69f0ae,Bright yellow neocaridina. Cheerful and easy to breed.,false
+305,Crystal Red Shrimp,invertebrate,freshwater,5,68,76,5.5,6.8,3,6,0,2,6,0.5,advanced,🦐,,#69f0ae,Red and white banded caridina. Requires very specific soft acidic water.,true
+306,Crystal Black Shrimp,invertebrate,freshwater,5,68,76,5.5,6.8,3,6,0,2,6,0.5,advanced,🦐,,#69f0ae,Black and white version of crystal red. Same demanding water requirements.,false
+307,Taiwan Bee Shrimp,invertebrate,freshwater,5,68,76,5.5,6.8,3,6,0,2,6,0.5,advanced,🦐,,#69f0ae,"Premium shrimp varieties including King Kong, Panda, and Red Wine.",false
+308,Bamboo Shrimp,invertebrate,freshwater,15,72,80,6.5,7.5,3,10,2,6,2,0.5,intermediate,🦐,,#69f0ae,Filter feeding shrimp with fan-like hands. Sits in current catching food particles.,true
+309,Vampire Shrimp,invertebrate,freshwater,20,74,84,6.5,7.5,4,12,2,8,2,0.5,intermediate,🦐,,#69f0ae,Large blue-gray filter feeder. Impressive armored appearance.,false
+310,Ghost Shrimp,invertebrate,freshwater,5,65,80,7,8,5,15,3,10,4,0.5,beginner,🦐,,#69f0ae,Nearly transparent and very affordable. Great cleanup crew on a budget.,false
+311,Whisker Shrimp,invertebrate,freshwater,10,72,82,6.5,8,4,15,3,10,3,0.5,beginner,🦐,,#69f0ae,Larger than ghost shrimp with prominent whiskers. Can be slightly aggressive.,false
+312,Nerite Snail,invertebrate,freshwater,5,72,78,7,8.5,5,15,5,12,1,0.5,beginner,🦐,,#69f0ae,Tireless algae eaters with beautiful shell patterns. Won't breed in freshwater.,true
+313,Mystery Snail,invertebrate,freshwater,5,68,82,7,8,5,15,5,12,1,0.5,beginner,🦐,,#69f0ae,"Colorful and entertaining to watch. Available in gold, blue, ivory, and more.",true
+314,Rabbit Snail,invertebrate,freshwater,15,76,84,7.5,8.5,6,15,5,12,1,0.5,beginner,🦐,,#69f0ae,Elongated snail from Sulawesi with a rabbit-like face. Slow and peaceful.,false
+315,Assassin Snail,invertebrate,freshwater,5,72,82,6.5,7.5,5,15,2,10,2,0.5,beginner,🦐,,#69f0ae,Hunts and eats pest snails. A biological control for snail infestations.,true
+316,Japanese Trapdoor Snail,invertebrate,freshwater,10,60,80,6.5,8,5,18,3,12,1,0.5,beginner,🦐,,#69f0ae,Hardy livebearing snail. Good algae eater that won't overpopulate.,false
+317,Ramshorn Snail,invertebrate,freshwater,5,65,80,6.5,8,4,15,3,10,2,0.5,beginner,🦐,,#69f0ae,"Flat spiral shell in pink, blue, or red. Prolific breeders and good cleaners.",false
+318,Malaysian Trumpet Snail,invertebrate,freshwater,5,65,82,6.5,8,5,18,3,12,3,0.5,beginner,🦐,,#69f0ae,Burrows in substrate keeping it aerated. Mostly nocturnal. Breeds readily.,false
+319,Mexican Dwarf Crayfish (CPO),invertebrate,freshwater,5,65,80,6.5,8,6,15,3,10,1,0.5,beginner,🦐,,#69f0ae,Tiny bright orange crayfish. Generally safe with most fish unlike larger crayfish.,true
+320,Blue Crayfish (Procambarus alleni),invertebrate,freshwater,20,65,80,6.5,8,6,20,3,12,1,0.5,beginner,🦐,,#69f0ae,Electric blue freshwater lobster. Will eat plants and slow fish.,false
+321,Thai Micro Crab,invertebrate,freshwater,5,72,82,6.5,7.5,3,10,2,8,3,0.5,intermediate,🦐,,#69f0ae,Tiny fully aquatic crabs smaller than a dime. Delicate filter feeders.,false
+322,Freshwater Clam,invertebrate,freshwater,10,65,80,6.5,8,5,15,3,10,1,0.5,intermediate,🦐,,#69f0ae,Filter feeds water keeping it crystal clear. Needs established tank with food particles.,false
+400,Cleaner Shrimp (Skunk),invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Sets up cleaning stations for fish. Charismatic and useful reef inhabitant.,true
+401,Fire Shrimp,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Blood red body with white spots and antennae. Stunning and functional.,true
+402,Peppermint Shrimp,invertebrate,saltwater,10,72,80,8,8.4,8,12,8,12,2,0.5,beginner,🦐,,#69f0ae,Red and white striped. Eats pest aiptasia anemones.,true
+403,Coral Banded Shrimp,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Red and white banded with long white antennae. Can catch small fish.,false
+404,Sexy Shrimp,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,3,0.5,beginner,🦐,,#69f0ae,Tiny shrimp that sways its tail seductively. Lives on anemones.,false
+405,Harlequin Shrimp,invertebrate,saltwater,10,72,80,8,8.4,8,12,8,12,2,0.5,intermediate,🦐,,#69f0ae,Spectacular purple and white. Feeds exclusively on starfish.,false
+406,Pistol Shrimp (Randall's),invertebrate,saltwater,10,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Partners with watchman gobies. Creates burrows and produces snapping sounds.,true
+407,Emerald Crab,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Brilliant green. Consumes bubble algae that other creatures won't touch.,true
+408,Blue Leg Hermit Crab,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,5,0.5,beginner,🦐,,#69f0ae,Tiny algae-eating hermit. Essential cleanup crew member for reef tanks.,true
+409,Scarlet Reef Hermit,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,3,0.5,beginner,🦐,,#69f0ae,Bright red legs. Peaceful herbivore that won't bother tankmates.,false
+410,Halloween Hermit Crab,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,2,0.5,beginner,🦐,,#69f0ae,Orange and black legs like Halloween colors. Larger but generally peaceful.,false
+411,Turbo Snail,invertebrate,saltwater,10,72,80,8,8.4,8,12,8,12,2,0.5,beginner,🦐,,#69f0ae,Powerhouse algae eaters. Can knock over loose corals with their bulk.,true
+412,Astrea Snail,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,3,0.5,beginner,🦐,,#69f0ae,Efficient algae grazers. Can't right themselves if flipped — check on them.,true
+413,Nassarius Snail,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,3,0.5,beginner,🦐,,#69f0ae,Sand-sifting scavenger that burrows and pops up when food is detected.,true
+414,Cerith Snail,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,5,0.5,beginner,🦐,,#69f0ae,Elongated spiral shell. Excellent detritus and algae eater. Works at night.,false
+415,Trochus Snail,invertebrate,saltwater,5,72,80,8,8.4,8,12,8,12,3,0.5,beginner,🦐,,#69f0ae,Can right itself unlike astrea. Hardy and effective algae grazer.,false
+416,Fighting Conch,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Sand-sifting conch with beautiful shell. Keeps sandbed clean.,false
+417,Tuxedo Urchin,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Red and black banded urchin. Decorates itself with shells and debris. Great algae eater.,true
+418,Pencil Urchin,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Thick blunt spines. Hardy urchin but may munch on some corals.,false
+419,Sand Sifting Starfish,invertebrate,saltwater,30,72,80,8,8.4,8,12,8,12,1,0.5,intermediate,🦐,,#69f0ae,Processes sand for food. Can deplete sandbed fauna in small tanks.,false
+420,Serpent Starfish,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Long flexible arms that reach from crevices to grab food. Excellent scavenger.,false
+421,Porcelain Crab,invertebrate,saltwater,10,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Flat filter-feeding crab that lives in anemones alongside clownfish.,false
+422,Arrow Crab,invertebrate,saltwater,20,72,80,8,8.4,8,12,8,12,1,0.5,intermediate,🦐,,#69f0ae,Long spindly legs and pointed nose. Eats bristleworms but may grab small fish.,false
+423,Feather Duster Worm,invertebrate,saltwater,10,72,80,8,8.4,8,12,8,12,1,0.5,beginner,🦐,,#69f0ae,Beautiful fan-shaped crown extends from a tube to filter feed. Retracts when startled.,true
+424,Maxima Clam,invertebrate,saltwater,20,74,80,8.1,8.4,8,12,8,12,1,0.5,advanced,🦐,,#69f0ae,Brilliant electric blue and green mantles. Requires intense lighting.,true
+425,Derasa Clam,invertebrate,saltwater,30,74,80,8.1,8.4,8,12,8,12,1,0.5,intermediate,🦐,,#69f0ae,Largest and hardiest of the giant clams for aquariums. Less light demanding.,false
+500,Zoanthids,coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Kaleidoscopic colors. The gateway coral — hardy and comes in infinite morphs.,true
+501,Mushroom Coral (Discosoma),coral,saltwater,10,75,80,8,8.4,8,12,7,11,1,1.0,beginner,🪸,,#ff6b9d,Soft flowing discs in vivid colors. Nearly indestructible for a coral.,true
+502,Rhodactis Mushroom,coral,saltwater,10,75,80,8,8.4,8,12,7,11,1,1.0,beginner,🪸,,#ff6b9d,Hairy/bumpy mushroom variety. Can grow very large. Many color morphs.,false
+503,Ricordea Florida,coral,saltwater,10,75,80,8,8.4,8,12,7,11,1,1.0,beginner,🪸,,#ff6b9d,"Bubble-like tentacles in orange, green, blue. Premium collector coral.",true
+504,Ricordea Yuma,coral,saltwater,10,75,80,8,8.4,8,12,7,11,1,1.0,intermediate,🪸,,#ff6b9d,More demanding than Florida ricordea. Extraordinary color combinations.,false
+505,Green Star Polyps (GSP),coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Bright green flowing polyps on purple mat. Grows fast — can be invasive.,true
+506,Xenia (Pulsing),coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Hypnotic pulsing motion. Grows rapidly and pulses to exchange gases.,true
+507,Kenya Tree Coral,coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Tree-shaped soft coral that drops branches to propagate. Nearly unkillable.,true
+508,Toadstool Leather Coral,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,beginner,🪸,,#ff6b9d,Mushroom-shaped with flowing polyps. Periodically sheds a waxy coating.,true
+509,Devil's Hand Leather,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,beginner,🪸,,#ff6b9d,Finger-like lobes with tiny polyps. Very hardy and grows large.,false
+510,Finger Leather Coral,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,beginner,🪸,,#ff6b9d,Branching finger-like projections. Hardy and adds great texture.,false
+511,Cabbage Leather Coral,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,beginner,🪸,,#ff6b9d,Ruffled edges like a head of cabbage. Dramatic size and presence.,false
+512,Clove Polyps,coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,"Delicate eight-tentacled polyps in brown, white, or green. Spreads moderately.",false
+513,Anthelia,coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Waving hand-like polyps. Some varieties pulse like xenia. Easy grower.,false
+514,Blue Clove Polyps,coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Metallic blue polyps that spread across rockwork. Stunning under blue LEDs.,false
+520,Hammer Coral (Euphyllia),coral,saltwater,30,75,80,8,8.4,8,12,8,12,1,3.0,intermediate,🪸,,#ff6b9d,Flowing tentacles with hammer-shaped tips. Mesmerizing movement under flow.,true
+521,Torch Coral (Euphyllia),coral,saltwater,30,75,80,8,8.4,8,12,8,12,1,3.0,intermediate,🪸,,#ff6b9d,Long flowing tentacles. Clownfish sometimes host in these as anemone substitutes.,true
+522,Frogspawn Coral (Euphyllia),coral,saltwater,30,75,80,8,8.4,8,12,8,12,1,3.0,intermediate,🪸,,#ff6b9d,Bubble-tipped tentacles resembling frog eggs. Beautiful in large colonies.,true
+523,Duncan Coral,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,beginner,🪸,,#ff6b9d,Round polyps on branching stalks. Fast growing and very forgiving LPS.,true
+524,Candy Cane Coral,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,beginner,🪸,,#ff6b9d,Trumpet-shaped polyps in pastel colors. Great beginner LPS coral.,true
+525,Acan Lord (Micromussa),coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,intermediate,🪸,,#ff6b9d,Fleshy circular polyps in rainbow colors. Highly collectible morphs.,true
+526,Brain Coral (Favia/Favites),coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Boulder-shaped with maze-like pattern. Extends sweeper tentacles at night.,false
+527,Blastomussa,coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Fleshy polyps in reds and greens. Low light tolerant and very easy LPS.,false
+528,Goniopora (Flowerpot),coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,advanced,🪸,,#ff6b9d,Beautiful daisy-like polyps. Historically difficult but captive varieties improving.,false
+529,Bubble Coral,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Inflates grape-like bubbles during the day. Deflates at night to feed.,false
+530,Plate Coral (Fungia),coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Free-living coral that sits on sand. Can actually move slowly across substrate.,false
+531,Elegance Coral,coral,saltwater,30,75,80,8,8.4,8,12,8,12,1,3.0,advanced,🪸,,#ff6b9d,Magnificent flowing tentacles with colored tips. Demanding but breathtaking.,false
+532,Lobo Brain Coral,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,beginner,🪸,,#ff6b9d,Smooth fleshy brain coral. Hardy and comes in many color combinations.,false
+533,Chalice Coral,coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,intermediate,🪸,,#ff6b9d,Encrusting plates with incredible eye patterns. Highly sought-after morphs.,true
+534,War Coral (Favites),coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Named for aggressive sweeper tentacles at night. Beautiful honeycomb pattern.,false
+535,Scoly (Scolymia),coral,saltwater,10,75,80,8,8.4,8,12,8,12,1,1.0,intermediate,🪸,,#ff6b9d,Single large polyp in stunning rainbow colors. Premium collector coral.,true
+536,Wellsophyllia,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Folded brain-like appearance in greens and reds. Dramatic under blue lights.,false
+540,Acropora,coral,saltwater,50,76,80,8.1,8.4,8,12,9,12,1,5.0,advanced,🪸,,#ff6b9d,The pinnacle of reef keeping. Stunning branching structures demanding pristine water.,true
+541,Montipora (Plating),coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Plating growth form in vivid colors. Easier SPS — great stepping stone to acropora.,true
+542,Montipora (Digitata),coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Finger-like branching montipora. Fast growing and colorful.,false
+543,Birdsnest Coral (Seriatopora),coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,"Fine delicate branches in pink, green, or blue. One of the easiest SPS.",true
+544,Pocillopora,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Cauliflower-like growth. Very fast growing SPS. Good beginner SPS.,false
+545,Stylophora,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Smooth branching coral in bright pinks and greens. Moderately easy SPS.,false
+546,Pavona,coral,saltwater,20,75,80,8,8.4,8,12,8,12,1,2.0,intermediate,🪸,,#ff6b9d,Lettuce-like encrusting coral. Grows under a wide range of conditions.,false
+547,Oregon Tort Acropora,coral,saltwater,50,76,80,8.1,8.4,8,12,9,12,1,5.0,advanced,🪸,,#ff6b9d,Famous vivid blue acropora. One of the most sought-after SPS morphs.,false
+548,Walt Disney Acropora,coral,saltwater,50,76,80,8.1,8.4,8,12,9,12,1,5.0,advanced,🪸,,#ff6b9d,"Multicolored showpiece with blue base, purple branches, and green polyps.",false
+560,Bubble Tip Anemone,coral,saltwater,30,75,80,8,8.4,8,12,8,12,1,3.0,intermediate,🪸,,#ff6b9d,"Most popular host anemone for clownfish. Comes in green, rose, and rainbow.",true
+561,Rock Flower Anemone,coral,saltwater,10,72,80,8,8.4,8,12,8,12,1,1.0,beginner,🪸,,#ff6b9d,Colorful Caribbean anemone. Stays put and doesn't wander like other nems.,true
+562,Magnificent Anemone,coral,saltwater,75,75,80,8.1,8.4,8,12,8,12,1,8.0,advanced,🪸,,#ff6b9d,Massive and stunning but demanding. The preferred host for ocellaris clownfish.,false
+563,Long Tentacle Anemone,coral,saltwater,30,75,80,8,8.4,8,12,8,12,1,3.0,intermediate,🪸,,#ff6b9d,Graceful flowing tentacles rooted in sand. Can wander and sting corals.,false
+600,African Dwarf Frog,amphibian,freshwater,5,72,82,6.5,7.8,5,15,2,8,2,1.0,beginner,🐸,,#a5d6a7,Fully aquatic and full of charm. Loves to float at the surface with arms spread.,true
+601,Axolotl,amphibian,freshwater,20,60,68,6.5,8,7,14,3,8,1,2.0,intermediate,🐸,,#a5d6a7,The smiling salamander. Needs cold water and gentle flow. Utterly unique.,true
+602,Fire Belly Newt,amphibian,freshwater,10,62,72,6.5,7.5,6,12,3,8,2,1.0,intermediate,🐸,,#a5d6a7,Vivid orange belly warns predators. Semi-aquatic — needs land area access.,true
+603,Paddle Tail Newt,amphibian,freshwater,15,65,75,6.5,7.5,5,12,3,8,2,2.0,intermediate,🐸,,#a5d6a7,Fully aquatic newt with a paddle-shaped tail for swimming. Nocturnal.,false
+604,Eastern Newt,amphibian,freshwater,10,58,72,6,7.5,5,15,3,10,2,1.0,intermediate,🐸,,#a5d6a7,Olive green aquatic adult stage. Goes through a bright orange eft land phase.,false
+605,African Clawed Frog,amphibian,freshwater,10,68,77,6.5,8,5,18,3,12,1,1.0,beginner,🐸,,#a5d6a7,Larger cousin of dwarf frogs. Fully aquatic but will eat anything that fits in its mouth.,true
+606,Spanish Ribbed Newt,amphibian,freshwater,20,60,72,6.5,7.5,5,15,3,10,2,2.0,intermediate,🐸,,#a5d6a7,Can push its ribs through its skin as a defense. Hardy and long-lived.,false
+607,Alpine Newt,amphibian,freshwater,10,55,68,6,7.5,5,15,3,10,2,1.0,intermediate,🐸,,#a5d6a7,Stunning blue and orange breeding colors. Needs cool temperatures.,false
+608,Surinam Toad,amphibian,freshwater,15,72,82,6,7.5,3,12,2,8,1,2.0,intermediate,🐸,,#a5d6a7,Bizarre flat toad. Babies develop in pockets on mother's back. Fully aquatic.,false
+609,Japanese Fire Belly Newt,amphibian,freshwater,10,60,72,6.5,7.5,5,12,3,8,2,1.0,intermediate,🐸,,#a5d6a7,Bright red belly with dark top. Hardy and long-lived — can exceed 25 years.,false
+610,Mexican Axolotl (Wild Type),amphibian,freshwater,20,58,68,6.5,8,7,14,3,8,1,2.0,intermediate,🐸,,#a5d6a7,Dark wild-type coloration. Critically endangered in the wild.,false
+611,Axolotl (Leucistic),amphibian,freshwater,20,60,68,6.5,8,7,14,3,8,1,2.0,intermediate,🐸,,#a5d6a7,White/pink body with dark eyes. The most popular axolotl morph.,true
+612,Axolotl (GFP/Green Fluorescent),amphibian,freshwater,20,60,68,6.5,8,7,14,3,8,1,2.0,intermediate,🐸,,#a5d6a7,Glows green under blue/UV light. A unique and eye-catching morph.,false
