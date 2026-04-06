@@ -10,6 +10,8 @@ import { Bubble, ClownfishLogo, SwimmingFish } from "./components/ambient/Ambien
 const BIOLOAD_PCT_DISPLAY_CAP = 1000;
 /** Initial rows shown on the matches (results) species list before "See more". */
 const MATCHES_PAGE_SIZE = 10;
+/** How many extra rows each "See more" reveals. */
+const MATCHES_SEE_MORE_INCREMENT = 30;
 
 export default function AquariumStockr() {
   // ── State: wizard & transitions (hook order fixed) ─────────────────────
@@ -252,7 +254,6 @@ export default function AquariumStockr() {
   const catalogReady = catalogStatus === "ready";
   const visibleCompatible = compatible.slice(0, matchesVisibleCount);
   const matchesHasMore = compatible.length > matchesVisibleCount;
-  const matchesRemaining = compatible.length - matchesVisibleCount;
 
   // ── Render: layout shell ────────────────────────────────────────────────
   return (
@@ -888,8 +889,7 @@ export default function AquariumStockr() {
             {/* Filters */}
             <div style={{ marginBottom: 24, animation: "fadeUp 0.6s ease 0.3s both" }}>
               <h3 style={{ fontSize: 14, textTransform: "uppercase", letterSpacing: 2, color: "rgba(176,222,255,0.4)", fontWeight: 600, marginBottom: 12 }}>
-                All Compatible Species ({compatible.length}
-                {matchesHasMore ? ` · showing ${visibleCompatible.length}` : ""})
+                All Compatible Species ({compatible.length})
               </h3>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {["all", "fish", "invertebrate", "coral", "amphibian"].map((t) => {
@@ -1085,7 +1085,7 @@ export default function AquariumStockr() {
                   }}>
                     <button
                       type="button"
-                      onClick={() => setMatchesVisibleCount((n) => Math.min(compatible.length, n + MATCHES_PAGE_SIZE))}
+                      onClick={() => setMatchesVisibleCount((n) => Math.min(compatible.length, n + MATCHES_SEE_MORE_INCREMENT))}
                       className="glow-btn"
                       style={{
                         padding: "12px 28px", fontSize: 15, fontWeight: 600,
@@ -1096,7 +1096,7 @@ export default function AquariumStockr() {
                         transition: "all 0.2s ease",
                       }}
                     >
-                      See more ({matchesRemaining} more)
+                      See more
                     </button>
                   </div>
                 )}
