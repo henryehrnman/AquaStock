@@ -41,9 +41,11 @@ export default function AquariumStockr() {
   const [catalogErrorDetail, setCatalogErrorDetail] = useState("");
   const [catalogReloadTick, setCatalogReloadTick] = useState(0);
   const [matchesVisibleCount, setMatchesVisibleCount] = useState(MATCHES_PAGE_SIZE);
+  const [showStockFloatBubble, setShowStockFloatBubble] = useState(false);
 
   // ── Refs: scroll targets & ambient parallax ────────────────────────────
   const resultsRef = useRef(null);
+  const readyToStockAnchorRef = useRef(null);
   const bubbleRefs = useRef([]);
   const fishRefs = useRef([]);
   // Random fish pool — generated once on mount, covers 0–5000% page depth
@@ -255,6 +257,24 @@ export default function AquariumStockr() {
   const visibleCompatible = compatible.slice(0, matchesVisibleCount);
   const matchesHasMore = compatible.length > matchesVisibleCount;
 
+  // After "See more", show a fixed bubble CTA when the main Ready to Stock scrolls off-screen
+  useEffect(() => {
+    const expandedList = matchesVisibleCount > MATCHES_PAGE_SIZE;
+    const el = readyToStockAnchorRef.current;
+    if (step !== 2 || !catalogReady || compatible.length === 0 || !expandedList || !el) {
+      setShowStockFloatBubble(false);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        setShowStockFloatBubble(!entry.isIntersecting);
+      },
+      { root: null, threshold: 0 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [step, catalogReady, compatible.length, matchesVisibleCount]);
+
   // ── Render: layout shell ────────────────────────────────────────────────
   return (
     <div style={{
@@ -325,6 +345,18 @@ export default function AquariumStockr() {
         @keyframes ripple {
           0% { transform: scale(0.8); opacity: 0.6; }
           100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes stock-float-bubble {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .stock-float-bubble {
+          animation: stock-float-bubble 2.8s ease-in-out infinite;
+          box-shadow: 0 10px 32px rgba(0,0,0,0.4), 0 0 28px rgba(0,229,255,0.45);
+        }
+        .stock-float-bubble:hover {
+          filter: brightness(1.08);
+          box-shadow: 0 12px 36px rgba(0,0,0,0.45), 0 0 36px rgba(0,229,255,0.55);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         input[type="range"] {
@@ -1104,10 +1136,14 @@ export default function AquariumStockr() {
               )}
             </div>
 
-            {/* Ready to Stock button */}
+            {/* Ready to Stock button (observed for floating bubble after See more) */}
             {compatible.length > 0 && (
-              <div style={{ marginTop: 40, display: "flex", justifyContent: "center", animation: "fadeUp 0.6s ease 0.5s both" }}>
+              <div
+                ref={readyToStockAnchorRef}
+                style={{ marginTop: 40, display: "flex", justifyContent: "center", animation: "fadeUp 0.6s ease 0.5s both" }}
+              >
                 <button
+                  type="button"
                   onClick={() => { setStep(3); setStockTypeFilter("all"); }}
                   className="glow-btn"
                   style={{
@@ -1439,6 +1475,40 @@ export default function AquariumStockr() {
           );
         })()}
       </div>
+
+      {/* Floating bubble: same action as Ready to Stock when main CTA scrolls off-screen (after See more on matches) */}
+      {step === 2 && showStockFloatBubble && (
+        <button
+          type="button"
+          className="stock-float-bubble"
+          aria-label="Ready to Stock"
+          title="Ready to Stock"
+          onClick={() => { setStep(3); setStockTypeFilter("all"); }}
+          style={{
+            position: "fixed",
+            right: isMobile ? 14 : 22,
+            bottom: isMobile ? "max(18px, env(safe-area-inset-bottom, 0px))" : "max(24px, env(safe-area-inset-bottom, 0px))",
+            zIndex: 30,
+            width: isMobile ? 52 : 58,
+            height: isMobile ? 52 : 58,
+            borderRadius: "50%",
+            border: "2px solid rgba(0,229,255,0.55)",
+            background: "linear-gradient(145deg, #00b0ff, #00e5ff)",
+            color: "#0a1628",
+            fontSize: isMobile ? 20 : 24,
+            fontWeight: 700,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 0,
+            fontFamily: "inherit",
+            lineHeight: 1,
+          }}
+        >
+          →
+        </button>
+      )}
     </div>
   );
 }
