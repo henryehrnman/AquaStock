@@ -24,3 +24,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local-only (keep on your machine; not pushed)
+scripts/watch-autocommit.mjs
