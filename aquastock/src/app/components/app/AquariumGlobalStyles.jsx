@@ -61,9 +61,15 @@ export function AquariumGlobalStyles() {
           0% { transform: scale(0.8); opacity: 0.6; }
           100% { transform: scale(2.5); opacity: 0; }
         }
+        @keyframes stock-bubble-letter-in {
+          from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+          to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .stock-float-bubble-letter {
+          animation: stock-bubble-letter-in 0.42s cubic-bezier(0.33, 1.18, 0.52, 1) both;
+        }
         .stock-float-bubble {
           box-shadow: 0 10px 32px rgba(0,0,0,0.4), 0 0 28px rgba(0,229,255,0.45);
-          will-change: transform;
         }
         .stock-float-bubble:hover {
           filter: brightness(1.08);
