@@ -62,12 +62,27 @@ export function AquariumGlobalStyles() {
           100% { transform: scale(2.5); opacity: 0; }
         }
         @keyframes stock-float-bubble {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          20% { transform: translate(10px, -18px) rotate(5deg); }
+          40% { transform: translate(-8px, -26px) rotate(-4deg); }
+          60% { transform: translate(-14px, -12px) rotate(3deg); }
+          80% { transform: translate(6px, -22px) rotate(-2deg); }
+        }
+        @keyframes stock-float-bubble-mobile {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(-5px, -22px) rotate(5deg); }
+          50% { transform: translate(4px, -30px) rotate(-4deg); }
+          75% { transform: translate(-3px, -14px) rotate(3deg); }
         }
         .stock-float-bubble {
-          animation: stock-float-bubble 2.8s ease-in-out infinite;
+          animation: stock-float-bubble 3.2s ease-in-out infinite;
           box-shadow: 0 10px 32px rgba(0,0,0,0.4), 0 0 28px rgba(0,229,255,0.45);
+        }
+        @media (max-width: 640px) {
+          .stock-float-bubble {
+            animation-name: stock-float-bubble-mobile;
+            animation-duration: 2.9s;
+          }
         }
         .stock-float-bubble:hover {
           filter: brightness(1.08);
